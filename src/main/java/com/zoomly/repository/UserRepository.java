@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
+ * UserRepository.java
  * Repository class for User data access.
  * Currently implements in-memory storage, can be extended for database implementation.
  */

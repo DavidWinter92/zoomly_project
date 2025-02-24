@@ -20,12 +20,10 @@ public class ConsoleUI {
     public ConsoleUI() {
         this.scanner = new Scanner(System.in);
 
-        // Initialize repositories
         UserRepository userRepository = new UserRepository();
         VehicleRepository vehicleRepository = new VehicleRepository();
         ReservationRepository reservationRepository = new ReservationRepository();
 
-        // Initialize services
         this.userService = new UserService(userRepository);
         this.vehicleService = new VehicleService(vehicleRepository);
         this.reservationService = new ReservationService(reservationRepository, vehicleRepository);

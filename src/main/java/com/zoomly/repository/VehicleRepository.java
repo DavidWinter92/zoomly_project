@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
+ * VehicleRepository.java
  * Repository class for Vehicle data access.
  * Currently implements in-memory storage, can be extended for database implementation.
  */

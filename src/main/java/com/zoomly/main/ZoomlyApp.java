@@ -30,16 +30,13 @@ public class ZoomlyApp {
 
     public static void main(String[] args) {
         try {
-            // Initialize repositories
             UserRepository userRepository = new UserRepository();
             VehicleRepository vehicleRepository = new VehicleRepository();
 
             ConsoleUI consoleUI = new ConsoleUI();
 
-            // Create an instance of FileLoader with the user repository
             FileLoader fileLoader = new FileLoader(userRepository);
 
-            // Load data from text files
             loadedUsers = fileLoader.loadUsers("users.txt");
             loadedUsers.forEach(userRepository::save);
 
@@ -48,7 +45,6 @@ public class ZoomlyApp {
 
             System.out.println("Loaded " + loadedVehicles.size() + " vehicles.");
 
-            // Add test user
             User testUser = new User("Dave", "Wint", "admin2@gmail.com", "password1!", "administrator");
             userRepository.save(testUser);
             System.out.println("Saved user: " + testUser);

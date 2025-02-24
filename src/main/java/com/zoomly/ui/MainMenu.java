@@ -57,9 +57,9 @@ public class MainMenu {
         if (currentUser != null) {
             System.out.println("Login successful! Welcome, " + currentUser.getFirstName() + "!");
             if (currentUser.getAccountType().equals("administrator")) {
-                handleAdminMenu(); // Show Admin Menu
+                handleAdminMenu();
             } else {
-                handleUserMenu(); // Show User Menu
+                handleUserMenu();
             }
         } else {
             System.out.println("Invalid email or password. Please try again.");
@@ -67,18 +67,18 @@ public class MainMenu {
     }
 
     private void handleRegistration() {
-        consoleUI.handleRegistration(); // Delegate to ConsoleUI
+        consoleUI.handleRegistration();
     }
 
     private void handleAdminMenu() {
         AdminMenu adminMenu = new AdminMenu(currentUser, consoleUI.getUserService(),
                 consoleUI.getVehicleService(), consoleUI.getReservationService());
-        adminMenu.show(); // Navigate to AdminMenu
+        adminMenu.show();
     }
 
     private void handleUserMenu() {
         UserMenu userMenu = new UserMenu(currentUser, consoleUI.getUserService(),
                 consoleUI.getVehicleService(), consoleUI.getReservationService());
-        userMenu.show(); // Navigate to UserMenu
+        userMenu.show();
     }
 }

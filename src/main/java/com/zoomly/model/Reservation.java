@@ -3,6 +3,7 @@ package com.zoomly.model;
 import java.util.Date;
 
 /**
+ * Reservation.java
  * Represents a reservation in the system.
  * Links users with vehicles for specific date ranges.
  */
