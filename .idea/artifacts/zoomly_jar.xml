@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="zoomly:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/zoomly_jar</output-path>
+    <root id="archive" name="zoomly.jar">
+      <element id="module-output" name="zoomly" />
+    </root>
+  </artifact>
+</component>

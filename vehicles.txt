@@ -1,0 +1,3 @@
+SUV,Honda CR-V,2023,15000,45.99
+Sedan,Toyota Carolla,2019,55000,35.50
+Truck,Ford F-150,2021,30000,55.75
