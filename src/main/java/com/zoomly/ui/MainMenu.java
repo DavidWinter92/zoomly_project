@@ -1,8 +1,13 @@
 package com.zoomly.ui;
 
 import com.zoomly.model.User;
+import com.zoomly.model.Vehicle;
 import com.zoomly.repository.UserRepository;
 import com.zoomly.repository.VehicleRepository;
+import com.zoomly.util.FileLoader;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * MainMenu.java
@@ -37,6 +42,12 @@ public class MainMenu {
                     handleRegistration();
                     break;
                 case 3:
+                    uploadUsersFromFile(); // New option to upload users
+                    break;
+                case 4:
+                    uploadVehiclesFromFile(); // New option to upload vehicles
+                    break;
+                case 5:
                     running = false;
                     System.out.println("Thank you for using Zoomly. Goodbye!");
                     break;
@@ -71,14 +82,29 @@ public class MainMenu {
     }
 
     private void handleAdminMenu() {
-        AdminMenu adminMenu = new AdminMenu(currentUser, consoleUI.getUserService(),
+        AdminMenu adminMenu = new AdminMenu(consoleUI, currentUser, consoleUI.getUserService(),
                 consoleUI.getVehicleService(), consoleUI.getReservationService());
         adminMenu.show();
     }
 
     private void handleUserMenu() {
-        UserMenu userMenu = new UserMenu(currentUser, consoleUI.getUserService(),
+        UserMenu userMenu = new UserMenu(consoleUI, currentUser, consoleUI.getUserService(),
                 consoleUI.getVehicleService(), consoleUI.getReservationService());
         userMenu.show();
+    }
+
+    private void uploadUsersFromFile() {
+        AdminMenu adminMenu = new AdminMenu(consoleUI, currentUser, consoleUI.getUserService(),
+                consoleUI.getVehicleService(), consoleUI.getReservationService());
+        adminMenu.handleUserFileUpload(); // Call the user upload method
+    }
+
+    private void uploadVehiclesFromFile() {
+        AdminMenu adminMenu = new AdminMenu(consoleUI, currentUser, consoleUI.getUserService(),
+                consoleUI.getVehicleService(), consoleUI.getReservationService());
+        adminMenu.handleVehicleFileUpload(); // Call the vehicle upload method
+    }
+    public void setCurrentUser(User user) {
+        this.currentUser = user;
     }
 }

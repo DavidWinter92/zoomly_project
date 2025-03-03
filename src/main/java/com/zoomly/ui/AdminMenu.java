@@ -8,6 +8,9 @@ import com.zoomly.service.VehicleService;
 import com.zoomly.service.ReservationService;
 import com.zoomly.util.FileLoader;
 import com.zoomly.repository.UserRepository;
+import com.zoomly.util.Validator;
+
+import java.util.Date;
 import java.util.Scanner;
 import java.util.List;
 import java.text.SimpleDateFormat;
@@ -26,8 +29,11 @@ public class AdminMenu {
     private final ReservationService reservationService;
     private final SimpleDateFormat dateFormat;
 
-    public AdminMenu(User currentUser, UserService userService,
+    private final ConsoleUI consoleUI;
+
+    public AdminMenu(ConsoleUI consoleUI, User currentUser, UserService userService,
                      VehicleService vehicleService, ReservationService reservationService) {
+        this.consoleUI = consoleUI;
         this.scanner = new Scanner(System.in);
         this.currentUser = currentUser;
         this.userService = userService;
@@ -35,7 +41,6 @@ public class AdminMenu {
         this.reservationService = reservationService;
         this.dateFormat = new SimpleDateFormat("MM/dd/yyyy");
     }
-
     public void show() {
         boolean running = true;
         while (running) {
@@ -134,9 +139,10 @@ public class AdminMenu {
         }
     }
 
-    private void handleVehicleFileUpload() {
+    public void handleVehicleFileUpload() {
         System.out.print("Enter the path to the vehicle file: ");
         String filePath = scanner.nextLine();
+
         try {
             List<Vehicle> vehicles = FileLoader.loadVehicles(filePath);
             for (Vehicle vehicle : vehicles) {
@@ -185,17 +191,24 @@ public class AdminMenu {
         );
     }
     private void handleDeleteVehicle() {
+        List<Vehicle> vehicles = vehicleService.getAllVehicles();
+        if (vehicles.isEmpty()) {
+            System.out.println("No vehicles available to delete.");
+            return;
+        }
+
         viewAllVehicles();
         System.out.print("\nEnter vehicle ID to delete (0 to cancel): ");
         int vehicleId = getUserChoice();
         if (vehicleId == 0) return;
 
-        try {
-            vehicleService.deleteVehicle(vehicleId);
-            System.out.println("Vehicle deleted successfully.");
-        } catch (Exception e) {
-            System.out.println("Error deleting vehicle: " + e.getMessage());
+        if (!vehicleService.getVehicleById(vehicleId).isPresent()) {
+            System.out.println("Vehicle not found. Deletion failed.");
+            return;
         }
+
+        vehicleService.deleteVehicle(vehicleId);
+        System.out.println("Vehicle deleted successfully.");
     }
 
     private void updateVehicleFields(Vehicle vehicle) {
@@ -213,8 +226,13 @@ public class AdminMenu {
             try {
                 switch (choice) {
                     case 1:
-                        System.out.print("Enter new car type: ");
-                        vehicle.setCarType(scanner.nextLine());
+                        System.out.print("Enter new car type (SUV/Sedan/Truck): ");
+                        String newCarType = scanner.nextLine();
+                        if (!Validator.isValidCarType(newCarType)) {
+                            System.out.println("Invalid car type. Update failed.");
+                            continue;
+                        }
+                        vehicle.setCarType(newCarType);
                         break;
                     case 2:
                         System.out.print("Enter new model: ");
@@ -222,7 +240,12 @@ public class AdminMenu {
                         break;
                     case 3:
                         System.out.print("Enter new year: ");
-                        vehicle.setYear(Integer.parseInt(scanner.nextLine()));
+                        int newYear = Integer.parseInt(scanner.nextLine());
+                        if (!Validator.isValidYear(newYear)) {
+                            System.out.println("Invalid year. Update failed.");
+                            continue;
+                        }
+                        vehicle.setYear(newYear);
                         break;
                     case 4:
                         System.out.print("Enter new mileage: ");
@@ -310,7 +333,7 @@ public class AdminMenu {
         }
     }
 
-    private void handleUserFileUpload() {
+    public void handleUserFileUpload() {
         System.out.print("Enter the path to the user file: ");
         String filePath = scanner.nextLine();
 
@@ -497,12 +520,52 @@ public class AdminMenu {
                 switch (choice) {
                     case 1:
                         System.out.print("Enter new pickup date (MM/dd/yyyy): ");
-                        reservation.setPickupDate(dateFormat.parse(scanner.nextLine()));
+                        String newPickupDateStr = scanner.nextLine();
+                        if (!Validator.isValidDate(newPickupDateStr)) {
+                            System.out.println("Invalid date format. Please use MM/dd/yyyy format.");
+                            continue;
+                        }
+                        Date newPickupDate = dateFormat.parse(newPickupDateStr);
+
+                        // Validate dates
+                        if (newPickupDate.after(reservation.getDropOffDate())) {
+                            System.out.println("Pickup date cannot be after drop-off date.");
+                            continue;
+                        }
+
+                        // Check for conflicts with other reservations
+                        if (hasDateConflict(reservation.getVehicleId(), newPickupDate, reservation.getDropOffDate(), reservation.getId())) {
+                            System.out.println("This date range conflicts with another reservation.");
+                            continue;
+                        }
+
+                        reservation.setPickupDate(newPickupDate);
                         break;
+
                     case 2:
                         System.out.print("Enter new drop-off date (MM/dd/yyyy): ");
-                        reservation.setDropOffDate(dateFormat.parse(scanner.nextLine()));
+                        String newDropOffDateStr = scanner.nextLine();
+                        if (!Validator.isValidDate(newDropOffDateStr)) {
+                            System.out.println("Invalid date format. Please use MM/dd/yyyy format.");
+                            continue;
+                        }
+                        Date newDropOffDate = dateFormat.parse(newDropOffDateStr);
+
+                        // Validate dates
+                        if (newDropOffDate.before(reservation.getPickupDate())) {
+                            System.out.println("Drop-off date cannot be before pickup date.");
+                            continue;
+                        }
+
+                        // Check for conflicts with other reservations
+                        if (hasDateConflict(reservation.getVehicleId(), reservation.getPickupDate(), newDropOffDate, reservation.getId())) {
+                            System.out.println("This date range conflicts with another reservation.");
+                            continue;
+                        }
+
+                        reservation.setDropOffDate(newDropOffDate);
                         break;
+
                     case 3:
                         return;
                     default:
@@ -510,6 +573,7 @@ public class AdminMenu {
                         continue;
                 }
 
+                // Update total charge
                 Vehicle vehicle = vehicleService.getVehicleById(reservation.getVehicleId())
                         .orElseThrow(() -> new RuntimeException("Vehicle not found"));
                 long days = (reservation.getDropOffDate().getTime() -
@@ -521,6 +585,27 @@ public class AdminMenu {
                 System.out.println("Error updating reservation: " + e.getMessage());
             }
         }
+    }
+
+
+    private boolean hasDateConflict(int vehicleId, Date startDate, Date endDate, int excludeReservationId) {
+        List<Reservation> existingReservations = reservationService.getAllReservations();
+
+        for (Reservation existing : existingReservations) {
+            if (existing.getId() == excludeReservationId) {
+                continue;
+            }
+
+            if (existing.getVehicleId() != vehicleId) {
+                continue;
+            }
+
+            if (!(endDate.before(existing.getPickupDate()) ||
+                    startDate.after(existing.getDropOffDate()))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void handleDeleteReservation() {
@@ -538,7 +623,7 @@ public class AdminMenu {
     }
 
     private void handleAccountSettings() {
-        UserMenu userMenu = new UserMenu(currentUser, userService, vehicleService, reservationService);
+        UserMenu userMenu = new UserMenu(consoleUI, currentUser, userService, vehicleService, reservationService);
         userMenu.handleAccountSettings();
     }
 

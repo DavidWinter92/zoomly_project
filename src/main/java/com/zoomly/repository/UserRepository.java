@@ -15,7 +15,6 @@ import java.util.Optional;
 
 public class UserRepository {
     private final Map<Integer, User> users = new HashMap<>();
-    //private int nextId = 1;
 
     public User save(User user) {
         users.put(user.getId(), user);
