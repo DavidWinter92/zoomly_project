@@ -16,21 +16,23 @@ public class ConsoleUI {
     private final VehicleService vehicleService;
     private final ReservationService reservationService;
     private User currentUser;
+    private MainMenu mainMenu;
 
     public ConsoleUI() {
         this.scanner = new Scanner(System.in);
 
-        // Initialize repositories
         UserRepository userRepository = new UserRepository();
         VehicleRepository vehicleRepository = new VehicleRepository();
         ReservationRepository reservationRepository = new ReservationRepository();
 
-        // Initialize services
         this.userService = new UserService(userRepository);
         this.vehicleService = new VehicleService(vehicleRepository);
         this.reservationService = new ReservationService(reservationRepository, vehicleRepository);
+        this.mainMenu = new MainMenu(this, userRepository, vehicleRepository);
     }
-
+    public MainMenu getMainMenu() {
+        return mainMenu;
+    }
     public UserService getUserService() {
         return userService;
     }
@@ -50,12 +52,17 @@ public class ConsoleUI {
     public User getCurrentUser() {
         return currentUser;
     }
+    public void setCurrentUser(User user) {
+        this.currentUser = user;
+    }
 
     public void displayMainMenu() {
         System.out.println("\n--- Zoomly Vehicle Rental System ---");
         System.out.println("1. Login");
         System.out.println("2. Register");
-        System.out.println("3. Exit");
+        System.out.println("3. Upload Users from file");
+        System.out.println("4. Upload Vehicles from file");
+        System.out.println("5. Exit");
         System.out.print("Enter your choice: ");
     }
 

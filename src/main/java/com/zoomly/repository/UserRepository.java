@@ -8,13 +8,13 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
+ * UserRepository.java
  * Repository class for User data access.
  * Currently implements in-memory storage, can be extended for database implementation.
  */
 
 public class UserRepository {
     private final Map<Integer, User> users = new HashMap<>();
-    //private int nextId = 1;
 
     public User save(User user) {
         users.put(user.getId(), user);

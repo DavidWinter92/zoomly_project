@@ -6,6 +6,8 @@ import com.zoomly.model.Reservation;
 import com.zoomly.service.UserService;
 import com.zoomly.service.VehicleService;
 import com.zoomly.service.ReservationService;
+import com.zoomly.util.Validator;
+
 import java.util.Scanner;
 import java.util.List;
 import java.text.SimpleDateFormat;
@@ -19,14 +21,17 @@ import java.util.Date;
 
 public class UserMenu {
     private final Scanner scanner;
-    private final User currentUser;
+    private User currentUser;
     private final UserService userService;
     private final VehicleService vehicleService;
     private final ReservationService reservationService;
     private final SimpleDateFormat dateFormat;
+    private final ConsoleUI consoleUI;
+    private boolean shouldContinue = true;
 
-    public UserMenu(User currentUser, UserService userService,
+    public UserMenu(ConsoleUI consoleUI, User currentUser, UserService userService,
                     VehicleService vehicleService, ReservationService reservationService) {
+        this.consoleUI = consoleUI;
         this.scanner = new Scanner(System.in);
         this.currentUser = currentUser;
         this.userService = userService;
@@ -37,8 +42,7 @@ public class UserMenu {
 
 
     public void show() {
-        boolean running = true;
-        while (running) {
+        while (shouldContinue) {
             System.out.println("\n--- User Menu ---");
             System.out.println("1. Browse Vehicles");
             System.out.println("2. My Reservations");
@@ -58,7 +62,7 @@ public class UserMenu {
                     handleAccountSettings();
                     break;
                 case 4:
-                    running = false;
+                    shouldContinue = false;
                     break;
                 default:
                     System.out.println("Invalid choice. Please try again.");
@@ -107,11 +111,52 @@ public class UserMenu {
         if (vehicleId == 0) return;
 
         try {
-            System.out.print("Enter pickup date (MM/dd/yyyy): ");
-            Date pickupDate = dateFormat.parse(scanner.nextLine());
+            String pickupDateStr;
+            Date pickupDate;
+            while (true) {
+                System.out.print("Enter pickup date (MM/dd/yyyy): ");
+                pickupDateStr = scanner.nextLine();
 
-            System.out.print("Enter drop-off date (MM/dd/yyyy): ");
-            Date dropOffDate = dateFormat.parse(scanner.nextLine());
+                if (!Validator.isValidDate(pickupDateStr)) {
+                    System.out.println("Invalid date format. Please use MM/dd/yyyy format.");
+                    continue;
+                }
+
+                pickupDate = dateFormat.parse(pickupDateStr);
+
+                if (pickupDate.before(new Date())) {
+                    System.out.println("Pickup date must be today or in the future.");
+                    continue;
+                }
+
+                break;
+            }
+
+            String dropOffDateStr;
+            Date dropOffDate;
+            while (true) {
+                System.out.print("Enter drop-off date (MM/dd/yyyy): ");
+                dropOffDateStr = scanner.nextLine();
+
+                if (!Validator.isValidDate(dropOffDateStr)) {
+                    System.out.println("Invalid date format. Please use MM/dd/yyyy format.");
+                    continue;
+                }
+
+                dropOffDate = dateFormat.parse(dropOffDateStr);
+
+                if (dropOffDate.before(new Date())) {
+                    System.out.println("Drop-off date must be today or in the future.");
+                    continue;
+                }
+
+                if (dropOffDate.before(pickupDate)) {
+                    System.out.println("Drop-off date must be after pickup date.");
+                    continue;
+                }
+
+                break;
+            }
 
             System.out.print("Confirm reservation (Y/N)? ");
             String confirm = scanner.nextLine();
@@ -127,7 +172,6 @@ public class UserMenu {
             System.out.println("Error: " + e.getMessage());
         }
     }
-
     private void handleReservations() {
         while (true) {
             System.out.println("\n--- My Reservations ---");
@@ -142,6 +186,10 @@ public class UserMenu {
                     viewReservations();
                     break;
                 case 2:
+                    if (!hasReservations()) {
+                        System.out.println("You have no reservations to cancel.");
+                        continue;
+                    }
                     cancelReservation();
                     break;
                 case 3:
@@ -150,6 +198,10 @@ public class UserMenu {
                     System.out.println("Invalid choice. Please try again.");
             }
         }
+    }
+    private boolean hasReservations() {
+        List<Reservation> reservations = reservationService.getUserReservations(currentUser.getId());
+        return !reservations.isEmpty();
     }
 
     private void viewReservations() {
@@ -204,7 +256,10 @@ public class UserMenu {
                     editAccountInformation();
                     break;
                 case 3:
-                    if (deleteAccount()) return;
+                    if (deleteAccount()) {
+                        // Break out of the account settings loop AND the user menu loop
+                        return;
+                    }
                     break;
                 case 4:
                     return;
@@ -304,11 +359,29 @@ public class UserMenu {
 
         if (confirm.equalsIgnoreCase("Y")) {
             try {
+                // Delete user from repository
                 userService.deleteUser(currentUser.getId());
-                System.out.println("Account deleted successfully.");
+
+                // Clear current user reference
+                currentUser = null;
+
+                // Set current user to null in console UI
+                consoleUI.setCurrentUser(null);
+
+                // Get main menu instance
+                MainMenu mainMenu = (MainMenu) consoleUI.getMainMenu();
+                mainMenu.setCurrentUser(null);
+
+                // Print success message
+                System.out.println("Account deleted successfully. Logging out...");
+
+                shouldContinue = false;
+
+                // Return true to trigger logout
                 return true;
             } catch (Exception e) {
                 System.out.println("Error deleting account: " + e.getMessage());
+                return false;
             }
         }
         return false;

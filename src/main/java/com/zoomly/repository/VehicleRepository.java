@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
+ * VehicleRepository.java
  * Repository class for Vehicle data access.
  * Currently implements in-memory storage, can be extended for database implementation.
  */
@@ -18,8 +19,7 @@ public class VehicleRepository {
 
     public Vehicle save(Vehicle vehicle) {
         if (vehicle.getId() == 0) {
-            vehicle = new Vehicle(nextId++, vehicle.getCarType(), vehicle.getModel(),
-                    vehicle.getYear(), vehicle.getMileage(), vehicle.getPricePerDay());
+            vehicle.setId(nextId++);
         }
         vehicles.put(vehicle.getId(), vehicle);
         return vehicle;

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
+ * ReservationRepository.java
  * Repository class for Reservation data access.
  * Currently implements in-memory storage, can be extended for database implementation.
  */

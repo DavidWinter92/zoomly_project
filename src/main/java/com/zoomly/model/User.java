@@ -30,7 +30,7 @@ public class User {
     private static int getNextId() {
         return currentId++;
     }
-    // Getters and setters
+
     public int getId() { return id; }
     public String getFirstName() { return firstName; }
     public void setFirstName(String firstName) { this.firstName = firstName; }

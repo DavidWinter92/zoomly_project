@@ -36,6 +36,8 @@ public class Vehicle {
     public int getId() {
         return id;
     }
+    public void setId(int i) {
+    }
 
     public String getCarType() {
         return carType;
