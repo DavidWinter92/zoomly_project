@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.shape.QuadCurve?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/17.0.14" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.zoomly.controllers.AdministratorAccountSettingsController">
+   <left>
+      <AnchorPane prefHeight="550.0" prefWidth="146.0" style="-fx-background-color: #1b1b1b;" BorderPane.alignment="CENTER">
+         <children>
+            <Label layoutX="7.0" layoutY="3.0" prefHeight="22.0" prefWidth="78.0" text="Z O O M L Y" textAlignment="CENTER" textFill="#6fbf4e" textOverrun="CLIP">
+               <font>
+                  <Font name="Montserrat Black Italic" size="14.0" />
+               </font>
+            </Label>
+            <QuadCurve controlX="4.0" controlY="18.0" endX="18.0" fill="#ffffff00" layoutX="26.0" layoutY="22.0" startX="-7.0" stroke="#6fbf4e" strokeType="INSIDE" strokeWidth="3.0" />
+            <Button fx:id="manageVehiclesButton" layoutX="20.0" layoutY="228.0" mnemonicParsing="false" onAction="#handleManageVehicles" style="-fx-background-color: #1b1b1b;" text="Manage Vehicles" textFill="#6fbf4e" />
+            <Button fx:id="manageReservationsButton" layoutX="8.0" layoutY="273.0" mnemonicParsing="false" onAction="#handleManageReservations" style="-fx-background-color: #1b1b1b;" text="Manage Reservations" textFill="#6fbf4e" />
+            <Button fx:id="editAccountButton" layoutX="32.0" layoutY="368.0" mnemonicParsing="false" style="-fx-background-color: #6fbf4e;" text="Edit Account" textFill="WHITE" />
+            <Button fx:id="logoutButton" layoutX="41.0" layoutY="495.0" mnemonicParsing="false" style="-fx-background-color: #6fbf4e;" text="Logout" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Button>
+            <Button fx:id="adminMenuButton" layoutX="29.0" layoutY="173.0" mnemonicParsing="false" onAction="#handleAdminMenu" style="-fx-background-color: #1b1b1b;" text="Admin Profile" textFill="#6fbf4e" />
+            <Button fx:id="manageUsersButton" layoutX="27.0" layoutY="322.0" mnemonicParsing="false" onAction="#handleManageUsers" style="-fx-background-color: #1b1b1b;" text="Manage Users" textFill="#6fbf4e" />
+         </children>
+      </AnchorPane>
+   </left>
+   <center>
+      <AnchorPane prefHeight="550.0" prefWidth="145.0" style="-fx-background-color: #101010;" BorderPane.alignment="CENTER">
+         <children>
+            <Text fill="#6fbf4e" layoutX="123.0" layoutY="304.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Last Name:" />
+            <Text fill="#6fbf4e" layoutX="122.0" layoutY="254.0" strokeType="OUTSIDE" strokeWidth="0.0" text="First Name:" />
+            <Text fill="#6fbf4e" layoutX="152.0" layoutY="206.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Email:" />
+            <Text fill="#6fbf4e" layoutX="127.0" layoutY="353.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password:" />
+            <Button fx:id="updateEmailButton" layoutX="377.0" layoutY="189.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" style="-fx-background-color: #6fbf4e;" text="Update" textFill="WHITE" />
+            <Button fx:id="updateFirstNameButton" layoutX="377.0" layoutY="237.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" style="-fx-background-color: #6fbf4e;" text="Update" textFill="WHITE" />
+            <Button fx:id="updateLastNameButton" layoutX="377.0" layoutY="287.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" style="-fx-background-color: #6fbf4e;" text="Update" textFill="WHITE" />
+            <Button fx:id="updatePasswordButton" layoutX="377.0" layoutY="336.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" style="-fx-background-color: #6fbf4e;" text="Update" textFill="WHITE" />
+            <TextField fx:id="emailTextField" layoutX="207.0" layoutY="189.0" promptText="example@domain.com" />
+            <TextField fx:id="passwordTextField" layoutX="207.0" layoutY="336.0" />
+            <TextField fx:id="lastNameTextField" layoutX="207.0" layoutY="287.0" />
+            <TextField fx:id="firstNameTextField" layoutX="207.0" layoutY="237.0" />
+            <TextField fx:id="errorTextField" alignment="CENTER" disable="true" editable="false" layoutX="15.0" layoutY="442.0" prefHeight="25.0" prefWidth="534.0" style="-fx-background-color: #101010; -fx-text-fill: red;" />
+            <Text disable="true" fill="#6fbf4e" layoutX="49.0" layoutY="388.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password must be 8 characters and include 1 numebr and 1 special character.">
+               <cursor>
+                  <Cursor fx:constant="DEFAULT" />
+               </cursor>
+            </Text>
+         </children>
+      </AnchorPane>
+   </center>
+</BorderPane>
