@@ -3,6 +3,7 @@ package com.zoomly.service;
 import com.zoomly.model.Vehicle;
 import com.zoomly.repository.VehicleRepository;
 import com.zoomly.util.Validator;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -13,10 +14,18 @@ import java.util.Optional;
  */
 
 public class VehicleService {
+    private static VehicleService instance;
     private final VehicleRepository vehicleRepository;
 
-    public VehicleService(VehicleRepository vehicleRepository) {
-        this.vehicleRepository = vehicleRepository;
+    private VehicleService() {
+        this.vehicleRepository = VehicleRepository.getInstance();
+    }
+
+    public static VehicleService getInstance() {
+        if (instance == null) {
+            instance = new VehicleService();
+        }
+        return instance;
     }
 
     public Vehicle addVehicle(String carType, String model, int year,
@@ -59,5 +68,9 @@ public class VehicleService {
             throw new IllegalArgumentException("Vehicle not found");
         }
         return vehicleRepository.save(vehicle);
+    }
+
+    public VehicleRepository getVehicleRepository() {
+        return vehicleRepository;
     }
 }

@@ -25,6 +25,7 @@ public class Reservation {
         this.dropOffDate = dropOffDate;
         this.totalCharge = totalCharge;
     }
+
     private static int getNextId() {
         return currentId++;
     }
@@ -37,14 +38,7 @@ public class Reservation {
     public Date getDropOffDate() { return dropOffDate; }
     public void setDropOffDate(Date dropOffDate) { this.dropOffDate = dropOffDate; }
     public double getTotalCharge() { return totalCharge; }
-    public void setTotalCharge(double totalCharge) { this.totalCharge = totalCharge; }
 
-    /**
-     * method: toString
-     * parameters: none
-     * return: String - String representation of the reservation
-     * purpose: Creates a formatted string containing all reservation information
-     */
     @Override
     public String toString() {
         return String.format("Reservation{id=%d, userId=%d, vehicleId=%d, pickup=%s, dropoff=%s, charge=%.2f}",

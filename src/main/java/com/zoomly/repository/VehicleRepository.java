@@ -14,8 +14,23 @@ import java.util.Optional;
  */
 
 public class VehicleRepository {
+    private static VehicleRepository instance;
     private final Map<Integer, Vehicle> vehicles = new HashMap<>();
     private int nextId = 1;
+
+    private VehicleRepository() {}
+
+    /**
+     * method: getInstance
+     * return: VehicleRepository
+     * purpose: Returns the singleton instance of VehicleRepository.
+     */
+    public static VehicleRepository getInstance() {
+        if (instance == null) {
+            instance = new VehicleRepository();
+        }
+        return instance;
+    }
 
     public Vehicle save(Vehicle vehicle) {
         if (vehicle.getId() == 0) {

@@ -10,7 +10,6 @@ import java.util.List;
  */
 
 public class Vehicle {
-    private static int currentId = 1;
     private int id;
     private String carType;
     private String model;
@@ -20,7 +19,7 @@ public class Vehicle {
     private List<Reservation> reservations;
 
     public Vehicle(int id, String carType, String model, int year, double mileage, double pricePerDay) {
-        this.id = getNextId();
+        this.id = id;
         this.carType = carType;
         this.model = model;
         this.year = year;
@@ -29,14 +28,12 @@ public class Vehicle {
         this.reservations = new ArrayList<>();
     }
 
-    private static int getNextId() {
-        return currentId++;
-    }
-
     public int getId() {
         return id;
     }
-    public void setId(int i) {
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getCarType() {
@@ -83,12 +80,6 @@ public class Vehicle {
         return reservations;
     }
 
-    /**
-     * method: toString
-     * parameters: none
-     * return: String - String representation of the vehicle
-     * purpose: Creates a formatted string containing all vehicle information
-     */
     @Override
     public String toString() {
         return String.format("Vehicle{id=%d, type='%s', model='%s', year=%d, mileage=%.2f, pricePerDay=%.2f}",

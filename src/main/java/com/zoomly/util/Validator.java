@@ -13,6 +13,7 @@ import java.time.format.DateTimeParseException;
  * Validator.java
  * Provides validation methods for various input fields in the system.
  */
+
 public class Validator {
     private static final Set<String> VALID_ACCOUNT_TYPES = new HashSet<>(Arrays.asList("user", "administrator"));
     private static final Set<String> VALID_CAR_TYPES = new HashSet<>(Arrays.asList("SUV", "Sedan", "Truck"));
@@ -20,7 +21,6 @@ public class Validator {
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{6,}$");
     private static final Pattern NAME_PATTERN = Pattern.compile("^[A-Za-z]{1,10}$");
 
-    // Date pattern for MM/dd/yyyy format
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
     public static boolean isValidAccountType(String accountType) {
@@ -48,7 +48,6 @@ public class Validator {
         return year >= 1800 && year <= currentYear;
     }
 
-    // New method to validate dates
     public static boolean isValidDate(String dateStr) {
         try {
             LocalDate.parse(dateStr, DATE_FORMATTER);
@@ -58,7 +57,6 @@ public class Validator {
         }
     }
 
-    // New method to validate date ranges
     public static boolean isValidDateRange(String startDateStr, String endDateStr) {
         try {
             LocalDate startDate = LocalDate.parse(startDateStr, DATE_FORMATTER);

@@ -1,29 +1,35 @@
 package com.zoomly.main;
 
-import com.zoomly.repository.UserRepository;
-import com.zoomly.repository.VehicleRepository;
-import com.zoomly.ui.ConsoleUI;
-import com.zoomly.ui.MainMenu;
+import com.zoomly.controllers.LoginController;
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.stage.Stage;
 
 /**
  * David Winter
  * CEN-3024C
  * Software Development 1
- * 02/21/2025
+ * 03/09/2025
  *
  * ZoomlyApp.java
  * This class serves as the main entry point for the Zoomly Vehicle Rental System.
- * It initializes the data from text files and starts the application.
+ * It initializes the data from text files and starts the application with a graphical interface.
  */
 
-public class ZoomlyApp {
-    public static void main(String[] args) {
-        UserRepository userRepository = new UserRepository();
-        VehicleRepository vehicleRepository = new VehicleRepository();
-        ConsoleUI consoleUI = new ConsoleUI();
+public class ZoomlyApp extends Application {
 
-        // Start the application with the main menu
-        MainMenu mainMenu = new MainMenu(consoleUI, userRepository, vehicleRepository);
-        mainMenu.start();
+    @Override
+    public void start(Stage primaryStage) {
+        try {
+            LoginController loginController = new LoginController();
+            loginController.loadLoginScene(primaryStage);
+            primaryStage.setOnCloseRequest(event -> Platform.exit());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+        launch(args);
     }
 }

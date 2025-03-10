@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents a user in the system.
- * Users can be either regular users or administrators.
+ * User.java
+ * Model class representing a user in the Zoomly application.
+ * Contains user attributes and methods for managing user data.
  */
 
 public class User {
-    private static int currentId = 1;
     private final int id;
     private String firstName;
     private String lastName;
@@ -18,17 +18,14 @@ public class User {
     private String accountType;
     private List<Reservation> reservations;
 
-    public User(String firstName, String lastName, String email, String password, String accountType) {
-        this.id = getNextId();
+    public User(String firstName, String lastName, String email, String password, String accountType, int id) {
+        this.id = id; // Use the passed ID
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.accountType = accountType;
         this.reservations = new ArrayList<>();
-    }
-    private static int getNextId() {
-        return currentId++;
     }
 
     public int getId() { return id; }
@@ -44,13 +41,10 @@ public class User {
     public void setAccountType(String accountType) { this.accountType = accountType; }
     public List<Reservation> getReservations() { return reservations; }
 
+    public boolean isAdmin() {
+        return "administrator".equals(this.accountType.toLowerCase());
+    }
 
-    /**
-     * method: toString
-     * parameters: none
-     * return: String - String representation of the user
-     * purpose: Creates a formatted string containing all user information
-     */
     @Override
     public String toString() {
         return String.format("User{id=%d, firstName='%s', lastName='%s', email='%s', accountType='%s'}",

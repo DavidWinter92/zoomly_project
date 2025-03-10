@@ -1,6 +1,7 @@
 package com.zoomly.repository;
 
 import com.zoomly.model.Reservation;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,12 +11,27 @@ import java.util.Optional;
 /**
  * ReservationRepository.java
  * Repository class for Reservation data access.
- * Currently implements in-memory storage, can be extended for database implementation.
+ * Implements in-memory storage.
  */
 
 public class ReservationRepository {
+    private static ReservationRepository instance;
     private final Map<Integer, Reservation> reservations = new HashMap<>();
     private int nextId = 1;
+
+    private ReservationRepository() {}
+
+    /**
+     * method: getInstance
+     * return: ReservationRepository
+     * purpose: Returns the singleton instance of ReservationRepository.
+     */
+    public static ReservationRepository getInstance() {
+        if (instance == null) {
+            instance = new ReservationRepository();
+        }
+        return instance;
+    }
 
     public Reservation save(Reservation reservation) {
         if (reservation.getId() == 0) {

@@ -13,10 +13,27 @@ import java.util.Optional;
  */
 
 public class UserService {
+    private static UserService instance;
     private final UserRepository userRepository;
+    private User currentUser;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    private UserService() {
+        this.userRepository = UserRepository.getInstance();
+    }
+
+    public static UserService getInstance() {
+        if (instance == null) {
+            instance = new UserService();
+        }
+        return instance;
+    }
+
+    public UserRepository getUserRepository() {
+        return userRepository;
+    }
+
+    public User saveUser(User user) {
+        return userRepository.save(user);
     }
 
     public User registerUser(String firstName, String lastName, String email,
@@ -43,35 +60,19 @@ public class UserService {
             throw new IllegalArgumentException("Email already registered");
         }
 
-        User user = new User(firstName, lastName, email, password, accountType);
-
-        User savedUser = userRepository.save(user);
-
-        return savedUser;
-
-
+        int userId = userRepository.getNextId();
+        User user = new User(firstName, lastName, email, password, accountType, userId);
+        return userRepository.save(user);
     }
 
-    /**
-     * method: login
-     * parameters:
-     *   String email - User's email address
-     *   String password - User's password
-     * return: Optional<User> - The user if credentials are valid, empty otherwise
-     * purpose: Authenticates a user based on email and password
-     */
     public Optional<User> login(String email, String password) {
         Optional<User> userOptional = userRepository.findByEmail(email);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            System.out.println("Attempting login for email: " + email + " with password: " + password);
             if (user.getPassword().equals(password)) {
+                setCurrentUser(user);
                 return Optional.of(user);
-            } else {
-                System.out.println("Password mismatch for email: " + email);
             }
-        } else {
-            System.out.println("No user found with email: " + email);
         }
         return Optional.empty();
     }
@@ -84,6 +85,14 @@ public class UserService {
         return userRepository.findById(id);
     }
 
+    public User getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(User user) {
+        this.currentUser = user;
+    }
+
     public void deleteUser(int id) {
         userRepository.delete(id);
     }
@@ -94,7 +103,6 @@ public class UserService {
         }
         return userRepository.save(user);
     }
-
 
     public void updateEmail(int userId, String newEmail) {
         User user = userRepository.findById(userId)
