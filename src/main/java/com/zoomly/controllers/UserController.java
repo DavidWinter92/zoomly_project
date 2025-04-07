@@ -37,7 +37,7 @@ public class UserController extends BaseMenuController {
 
     @FXML
     private void initialize() {
-        loadCurrentUserData();
+        refreshData();
         browsVehicleButton.setOnAction(this::handleBrowsVehicle);
         reservationsButton.setOnAction(this::handleReservations);
         editAccountButton.setOnAction(this::handleEditAccount);
@@ -50,7 +50,8 @@ public class UserController extends BaseMenuController {
      * return: void
      * purpose: Loads the current user data and populates the text fields.
      */
-    private void loadCurrentUserData() {
+    @Override
+    protected void refreshData() {
         User currentUser = userService.getCurrentUser();
         if (currentUser != null) {
             firstNameTextField.setText(currentUser.getFirstName());

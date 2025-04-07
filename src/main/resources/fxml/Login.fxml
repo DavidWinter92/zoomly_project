@@ -20,7 +20,7 @@
             </Label>
             <QuadCurve controlX="3.0" controlY="28.0" endX="27.0" fill="#ffffff00" layoutX="98.0" layoutY="289.0" startX="-14.0" stroke="#6fbf4e" strokeType="INSIDE" strokeWidth="6.0" />
             <Label layoutX="62.0" layoutY="519.0" text="Project by David Winter" textFill="#6fbf4e" />
-            <Label layoutX="145.0" layoutY="295.0" text="Phase 3" textFill="#6fbf4e">
+            <Label layoutX="145.0" layoutY="295.0" text="Phase 4" textFill="#6fbf4e">
                <font>
                   <Font name="Montserrat Bold Italic" size="12.0" />
                </font>
@@ -31,7 +31,7 @@
    <center>
       <AnchorPane prefHeight="550.0" prefWidth="511.0" style="-fx-background-color: #101010;" BorderPane.alignment="CENTER">
          <children>
-            <Label layoutX="105.0" layoutY="250.0" text="Password" textFill="#6fbf4e">
+            <Label layoutX="103.0" layoutY="306.0" text="Password" textFill="#6fbf4e">
                <font>
                   <Font size="16.0" />
                </font>
@@ -41,30 +41,16 @@
                   <Font size="22.0" />
                </font>
             </Label>
-            <Label layoutX="135.0" layoutY="183.0" text="Email" textFill="#6fbf4e">
+            <Label layoutX="133.0" layoutY="239.0" text="Email" textFill="#6fbf4e">
                <font>
                   <Font size="16.0" />
                </font>
             </Label>
-            <TextField fx:id="emailTextField" layoutX="194.0" layoutY="183.0" promptText="Email" text="admin@test.com" />
-            <PasswordField fx:id="passwordPasswordField" layoutX="194.0" layoutY="250.0" promptText="Password" text="password1!" />
-            <Button fx:id="loginButton" contentDisplay="CENTER" layoutX="127.0" layoutY="313.0" mnemonicParsing="false" onAction="#handleLogin" prefHeight="30.0" prefWidth="70.0" style="-fx-background-color: #6fbf4e;" text="Login" textFill="WHITE" />
-            <Label layoutX="122.0" layoutY="428.0" text="Upload Users" textFill="#6fbf4e">
-               <font>
-                  <Font size="13.0" />
-               </font>
-            </Label>
-            <TextField fx:id="uploadUsersTextField" layoutX="206.0" layoutY="425.0" prefHeight="25.0" prefWidth="87.0" promptText="File Path" text="users.txt" />
-            <Button fx:id="uploadUsersButton" contentDisplay="CENTER" layoutX="300.0" layoutY="425.0" mnemonicParsing="false" onAction="#handleUserFileUpload" prefHeight="25.0" prefWidth="56.0" style="-fx-background-color: #6fbf4e;" text="Upload" textFill="WHITE" />
+            <TextField fx:id="emailTextField" layoutX="192.0" layoutY="239.0" promptText="Email" text="admin@test.com" />
+            <PasswordField fx:id="passwordPasswordField" layoutX="192.0" layoutY="306.0" promptText="Password" text="Password1!" />
+            <Button fx:id="loginButton" contentDisplay="CENTER" layoutX="125.0" layoutY="369.0" mnemonicParsing="false" onAction="#handleLogin" prefHeight="30.0" prefWidth="70.0" style="-fx-background-color: #6fbf4e;" text="Login" textFill="WHITE" />
             <Label fx:id="statusLabel" layoutX="89.0" layoutY="520.0" textFill="#6fbf4e" />
-            <TextField fx:id="uploadVehiclesTextField" layoutX="204.0" layoutY="484.0" prefHeight="25.0" prefWidth="87.0" promptText="File Path" text="vehicles.txt" />
-            <Button fx:id="uploadVehiclesButton" contentDisplay="CENTER" layoutX="297.0" layoutY="484.0" mnemonicParsing="false" onAction="#handleVehicleFileUpload" prefHeight="25.0" prefWidth="59.0" style="-fx-background-color: #6fbf4e;" text="Upload" textFill="WHITE" />
-            <Label layoutX="102.0" layoutY="487.0" text="Upload Vehicles:" textFill="#6fbf4e">
-               <font>
-                  <Font size="13.0" />
-               </font>
-            </Label>
-            <Button fx:id="SignUp" contentDisplay="CENTER" layoutX="251.0" layoutY="313.0" mnemonicParsing="false" onAction="#handleSignUp" prefHeight="30.0" prefWidth="70.0" style="-fx-background-color: #101010;" text="Sign Up" textFill="#6fbf4e">
+            <Button fx:id="SignUp" contentDisplay="CENTER" layoutX="249.0" layoutY="369.0" mnemonicParsing="false" onAction="#handleSignUp" prefHeight="30.0" prefWidth="70.0" style="-fx-background-color: #101010;" text="Sign Up" textFill="#6fbf4e">
                <font>
                   <Font size="14.0" />
                </font>

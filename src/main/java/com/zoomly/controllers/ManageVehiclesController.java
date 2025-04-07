@@ -3,39 +3,25 @@ package com.zoomly.controllers;
 import com.zoomly.model.Vehicle;
 import com.zoomly.service.VehicleService;
 import com.zoomly.util.FileLoader;
-import com.zoomly.util.Validator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import java.time.Year;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.util.converter.DoubleStringConverter;
+import javafx.util.converter.IntegerStringConverter;
+
+import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * ManageVehiclesController.java
- * Controller class for managing vehicle operations in the application.
- * Provides functionalities to add, update, delete, and list vehicles.
+ * Controller class for managing vehicles in the application.
+ * Handles adding, deleting, updating vehicle details, uploading vehicle files, and scene transitions.
  */
 
 public class ManageVehiclesController extends BaseMenuController {
-    @FXML
-    public Button manageUsersButton;
-    @FXML
-    public Button adminMenuButton;
-    @FXML
-    public Button logoutButton;
-    @FXML
-    public Button editAccountButton;
-    @FXML
-    public Button manageReservationsButton;
-    @FXML
-    public Button manageVehiclesButton;
-    @FXML
-    private Button listVehiclesButton;
-    @FXML
-    private Button updateVehicleButton;
+
     @FXML
     private Button addVehicleButton;
     @FXML
@@ -43,9 +29,11 @@ public class ManageVehiclesController extends BaseMenuController {
     @FXML
     private Button uploadButton;
     @FXML
-    private TextField vehicleIdTextField;
+    private Button editVehicleButton;
     @FXML
-    private TextField typeTextField;
+    private TextField vinTextField;
+    @FXML
+    private TextField makeTextField;
     @FXML
     private TextField modelTextField;
     @FXML
@@ -55,11 +43,34 @@ public class ManageVehiclesController extends BaseMenuController {
     @FXML
     private TextField priceTextField;
     @FXML
-    private TextField deleteVehicleIdTextField;
+    private TextField imagePathTextField;
+    @FXML
+    private TextField descriptionTextField;
     @FXML
     private TextField uploadVehiclesTextField;
     @FXML
-    private TextArea vehiclesListTextArea;
+    private TableView<Vehicle> vehiclesTableView;
+
+    @FXML
+    private TableColumn<Vehicle, Integer> idColumn;
+    @FXML
+    private TableColumn<Vehicle, String> makeColumn;
+    @FXML
+    private TableColumn<Vehicle, String> modelColumn;
+    @FXML
+    private TableColumn<Vehicle, Integer> yearColumn;
+    @FXML
+    private TableColumn<Vehicle, Double> mileageColumn;
+    @FXML
+    private TableColumn<Vehicle, String> vinColumn;
+    @FXML
+    private TableColumn<Vehicle, String> imagePathColumn;
+    @FXML
+    private TableColumn<Vehicle, String> descriptionColumn;
+    @FXML
+    private TableColumn<Vehicle, Double> pricePerDayColumn;
+    @FXML
+    private Label errorLabel;
 
     private VehicleService vehicleService;
 
@@ -69,189 +80,185 @@ public class ManageVehiclesController extends BaseMenuController {
 
     @FXML
     private void initialize() {
-        // Placeholder for logic initialization (Phase 4)
+        setupTableView();
+        loadVehicles();
     }
 
-    @FXML
-    private void handleListVehicles(ActionEvent event) {
-        List<Vehicle> vehicles = vehicleService.getAllVehicles();
-        StringBuilder vehicleList = new StringBuilder("Vehicles:\n");
-        for (Vehicle vehicle : vehicles) {
-            vehicleList.append(vehicle.toString()).append("\n");
-        }
-        vehiclesListTextArea.setText(vehicleList.toString());
+    private void setupTableView() {
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        makeColumn.setCellValueFactory(new PropertyValueFactory<>("make"));
+        modelColumn.setCellValueFactory(new PropertyValueFactory<>("model"));
+        yearColumn.setCellValueFactory(new PropertyValueFactory<>("year"));
+        mileageColumn.setCellValueFactory(new PropertyValueFactory<>("mileage"));
+        vinColumn.setCellValueFactory(new PropertyValueFactory<>("vin"));
+        imagePathColumn.setCellValueFactory(new PropertyValueFactory<>("imagePath"));
+        descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+        pricePerDayColumn.setCellValueFactory(new PropertyValueFactory<>("pricePerDay"));
+
+        makeColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        modelColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        yearColumn.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+        mileageColumn.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+        pricePerDayColumn.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+
+        descriptionColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        imagePathColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+
+        makeColumn.setOnEditCommit(event -> updateVehicleField(event, "make"));
+        modelColumn.setOnEditCommit(event -> updateVehicleField(event, "model"));
+        yearColumn.setOnEditCommit(event -> updateVehicleField(event, "year"));
+        mileageColumn.setOnEditCommit(event -> updateVehicleField(event, "mileage"));
+        pricePerDayColumn.setOnEditCommit(event -> updateVehicleField(event, "pricePerDay"));
+        descriptionColumn.setOnEditCommit(event -> updateVehicleField(event, "description"));
+        imagePathColumn.setOnEditCommit(event -> updateVehicleField(event, "imagePath"));
+
+        vehiclesTableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+
+        vehiclesTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                System.out.println("Selected vehicle: " + newValue.getMake());
+            }
+        });
     }
 
-    @FXML
-    private void handleUpdateVehicle(ActionEvent event) {
-        String idText = vehicleIdTextField.getText();
-        if (idText.isEmpty()) {
-            vehiclesListTextArea.setText("Please enter a vehicle ID to update.");
-            return;
-        }
+    private void updateVehicleField(TableColumn.CellEditEvent<Vehicle, ?> event, String fieldName) {
+        Vehicle selectedVehicle = event.getRowValue();
+        String originalValue = event.getOldValue().toString();
+        String newValue = event.getNewValue().toString();
 
         try {
-            int vehicleId = Integer.parseInt(idText);
-            Optional<Vehicle> optionalVehicle = vehicleService.getVehicleById(vehicleId);
-            if (optionalVehicle.isPresent()) {
-                Vehicle vehicle = optionalVehicle.get();
-                validateAndUpdateVehicle(vehicle);
-            } else {
-                vehiclesListTextArea.setText("Vehicle not found.");
+            switch (fieldName) {
+                case "make":
+                    selectedVehicle.setMake(newValue);
+                    break;
+                case "model":
+                    selectedVehicle.setModel(newValue);
+                    break;
+                case "year":
+                    selectedVehicle.setYear(Integer.parseInt(newValue));
+                    break;
+                case "mileage":
+                    selectedVehicle.setMileage(Double.parseDouble(newValue));
+                    break;
+                case "pricePerDay":
+                    selectedVehicle.setPricePerDay(Double.parseDouble(newValue));
+                    break;
+                case "description":
+                    selectedVehicle.setDescription(newValue);
+                    break;
+                case "imagePath":
+                    selectedVehicle.setImagePath(newValue);
+                    break;
             }
-        } catch (NumberFormatException e) {
-            vehiclesListTextArea.setText("Invalid ID format.");
+
+            vehicleService.updateVehicle(
+                    selectedVehicle.getId(),
+                    selectedVehicle.getVin(),
+                    selectedVehicle.getMake(),
+                    selectedVehicle.getModel(),
+                    selectedVehicle.getYear(),
+                    selectedVehicle.getMileage(),
+                    selectedVehicle.getPricePerDay(),
+                    selectedVehicle.getImagePath(),
+                    selectedVehicle.getDescription()
+            );
+
+            loadVehicles();
+        } catch (Exception e) {
+            errorLabel.setText("Error updating vehicle: " + e.getMessage());
+            revertVehicleField(event, originalValue);
         }
+    }
+
+    private void revertVehicleField(TableColumn.CellEditEvent<Vehicle, ?> event, String originalValue) {
+        Vehicle selectedVehicle = event.getRowValue();
+
+        String fieldName = event.getTableColumn().getText();
+
+        try {
+            switch (fieldName) {
+                case "Make":
+                    selectedVehicle.setMake(originalValue);
+                    break;
+                case "Model":
+                    selectedVehicle.setModel(originalValue);
+                    break;
+                case "Year":
+                    selectedVehicle.setYear(Integer.parseInt(originalValue));
+                    break;
+                case "Mileage":
+                    selectedVehicle.setMileage(Double.parseDouble(originalValue));
+                    break;
+                case "Price per Day":
+                    selectedVehicle.setPricePerDay(Double.parseDouble(originalValue));
+                    break;
+                case "Description":
+                    selectedVehicle.setDescription(originalValue);
+                    break;
+                case "Image Path":
+                    selectedVehicle.setImagePath(originalValue);
+                    break;
+            }
+        } catch (Exception e) {
+            errorLabel.setText("Error reverting changes: " + e.getMessage());
+        }
+
+        vehiclesTableView.refresh();
+        event.consume();
+    }
+
+    private void loadVehicles() {
+        List<Vehicle> vehicles = vehicleService.getAllVehicles();
+        vehiclesTableView.getItems().clear();
+        vehiclesTableView.getItems().addAll(vehicles);
     }
 
     @FXML
     private void handleAddVehicle(ActionEvent event) {
-        String idText = vehicleIdTextField.getText();
-        if (!idText.isEmpty()) {
-            vehiclesListTextArea.setText("ID field must be empty to add a vehicle.");
-            return;
-        }
-
-        String carType = typeTextField.getText();
+        String vin = vinTextField.getText();
+        String make = makeTextField.getText();
         String model = modelTextField.getText();
-        String yearText = yearTextField.getText();
-        String mileageText = mileageTextField.getText();
-        String priceText = priceTextField.getText();
+        int year = Integer.parseInt(yearTextField.getText());
+        double mileage = Double.parseDouble(mileageTextField.getText());
+        double pricePerDay = Double.parseDouble(priceTextField.getText());
+        String imagePath = imagePathTextField.getText();
+        String description = descriptionTextField.getText();
 
-        StringBuilder errorMessages = new StringBuilder();
-
-        if (!Validator.isValidCarType(carType)) {
-            errorMessages.append("Car type '").append(carType).append("' is not valid: Valid car types are SUV, Sedan, or Truck.\n");
+        try {
+            Vehicle vehicle = vehicleService.addVehicle(vin, make, model, year, mileage, pricePerDay, imagePath, description);
+            loadVehicles();
+            errorLabel.setText("Vehicle added successfully: " + vehicle);
+        } catch (IllegalArgumentException e) {
+            errorLabel.setText("Error: " + e.getMessage());
+        } catch (Exception e) {
+            errorLabel.setText("An unexpected error occurred: " + e.getMessage());
         }
-
-        int year = 0;
-        if (yearText.isEmpty() || !yearText.matches("\\d+") || (year = Integer.parseInt(yearText)) < 1800 || year > Year.now().getValue()) {
-            errorMessages.append("Year must be a number between 1800 and ").append(Year.now().getValue()).append(".\n");
-        }
-
-        double mileage = 0;
-        if (mileageText.isEmpty() || !mileageText.matches("\\d+(\\.\\d+)?")) {
-            errorMessages.append("Mileage must be a valid number.\n");
-        } else {
-            mileage = Double.parseDouble(mileageText);
-        }
-
-        double pricePerDay = 0;
-        if (priceText.isEmpty() || !priceText.matches("\\d+(\\.\\d+)?")) {
-            errorMessages.append("Price per day must be a valid number.\n");
-        } else {
-            pricePerDay = Double.parseDouble(priceText);
-        }
-
-        if (errorMessages.length() > 0) {
-            vehiclesListTextArea.setText(errorMessages.toString());
-            return;
-        }
-
-        Vehicle vehicle = vehicleService.addVehicle(carType, model, year, mileage, pricePerDay);
-        vehiclesListTextArea.setText("Vehicle added: " + vehicle);
-    }
-
-    /**
-     * method: validateAndUpdateVehicle
-     * parameters: Vehicle vehicle - The vehicle object to update.
-     * return: void
-     * purpose: Validates and updates the details of the specified vehicle.
-     */
-    private void validateAndUpdateVehicle(Vehicle vehicle) {
-        boolean anyFieldUpdated = false;
-
-        if (!typeTextField.getText().isEmpty()) {
-            String carType = typeTextField.getText();
-            if (!Validator.isValidCarType(carType)) {
-                vehiclesListTextArea.setText("Car type '" + carType + "' is not valid: Valid car types are SUV, Sedan, or Truck.");
-                return;
-            }
-            vehicle.setCarType(carType);
-            anyFieldUpdated = true;
-        }
-
-        if (!modelTextField.getText().isEmpty()) {
-            vehicle.setModel(modelTextField.getText());
-            anyFieldUpdated = true;
-        }
-
-        if (!yearTextField.getText().isEmpty()) {
-            int year;
-            try {
-                year = Integer.parseInt(yearTextField.getText());
-                if (!Validator.isValidYear(year)) {
-                    vehiclesListTextArea.setText("Year must be between 1800 and " + Year.now().getValue() + ".");
-                    return;
-                }
-                vehicle.setYear(year);
-                anyFieldUpdated = true;
-            } catch (NumberFormatException e) {
-                vehiclesListTextArea.setText("Year must be a valid number.");
-                return;
-            }
-        }
-
-        if (!mileageTextField.getText().isEmpty()) {
-            double mileage;
-            try {
-                mileage = Double.parseDouble(mileageTextField.getText());
-                vehicle.setMileage(mileage);
-                anyFieldUpdated = true;
-            } catch (NumberFormatException e) {
-                vehiclesListTextArea.setText("Mileage must be a valid number.");
-                return;
-            }
-        }
-
-        if (!priceTextField.getText().isEmpty()) {
-            double pricePerDay;
-            try {
-                pricePerDay = Double.parseDouble(priceTextField.getText());
-                vehicle.setPricePerDay(pricePerDay);
-                anyFieldUpdated = true;
-            } catch (NumberFormatException e) {
-                vehiclesListTextArea.setText("Price per day must be a valid number.");
-                return;
-            }
-        }
-
-        if (!anyFieldUpdated) {
-            vehiclesListTextArea.setText("No updates were made: All fields are empty.");
-            return;
-        }
-
-        vehicleService.updateVehicle(vehicle);
-        vehiclesListTextArea.setText("Vehicle updated: " + vehicle);
     }
 
     @FXML
     private void handleDeleteVehicle(ActionEvent event) {
-        String idText = deleteVehicleIdTextField.getText();
-        if (idText.isEmpty()) {
-            vehiclesListTextArea.setText("Please enter a vehicle ID to delete.");
-            return;
-        }
-        try {
-            int vehicleId = Integer.parseInt(idText);
-            vehicleService.deleteVehicle(vehicleId);
-            vehiclesListTextArea.setText("Vehicle deleted: ID " + vehicleId);
-        } catch (NumberFormatException e) {
-            vehiclesListTextArea.setText("Invalid ID format.");
-        } catch (Exception e) {
-            vehiclesListTextArea.setText("Error deleting vehicle: " + e.getMessage());
+        Vehicle selectedVehicle = vehiclesTableView.getSelectionModel().getSelectedItem();
+        if (selectedVehicle != null) {
+            vehicleService.deleteVehicle(selectedVehicle.getId());
+            loadVehicles();
+            vehiclesTableView.getSelectionModel().clearSelection();
+            errorLabel.setText("Vehicle deleted: " + selectedVehicle.getVin());
+        } else {
+            errorLabel.setText("Please select a vehicle to delete.");
         }
     }
 
     @FXML
     private void handleVehicleFileUpload(ActionEvent event) {
         String filePath = uploadVehiclesTextField.getText();
-        FileLoader fileLoader = new FileLoader(null, vehicleService.getVehicleRepository());
+        FileLoader fileLoader = new FileLoader(null, vehicleService.getVehicleDao());
+
         try {
-            List<Vehicle> loadedVehicles = fileLoader.loadVehicles(filePath);
-            vehiclesListTextArea.setText("Loaded vehicles: " + loadedVehicles.size());
-        } catch (Exception e) {
-            vehiclesListTextArea.setText("Failed to load vehicles: " + e.getMessage());
+            fileLoader.loadVehicles(filePath);
+            loadVehicles();
+            errorLabel.setText("Vehicles loaded successfully.");
+        } catch (IOException e) {
+            errorLabel.setText("Failed to load vehicles: " + e.getMessage());
         }
     }
 
@@ -266,13 +273,13 @@ public class ManageVehiclesController extends BaseMenuController {
     }
 
     @FXML
-    private void handleAdminMenu(ActionEvent event) {
-        loadScene("/fxml/Administrator.fxml", "Admin Menu", event);
+    private void handleEditAccount(ActionEvent event) {
+        loadScene("/fxml/EditAccountAdmin.fxml", "Edit Account", event);
     }
 
     @FXML
-    private void handleEditAccount(ActionEvent event) {
-        loadScene("/fxml/EditAccountAdmin.fxml", "Edit Account", event);
+    private void handleAdminMenu(ActionEvent event) {
+        loadScene("/fxml/Administrator.fxml", "Admin Menu", event);
     }
 
     @FXML

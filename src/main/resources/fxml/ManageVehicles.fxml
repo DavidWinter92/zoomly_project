@@ -2,7 +2,8 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -36,32 +37,44 @@
    <center>
       <AnchorPane prefHeight="550.0" prefWidth="145.0" style="-fx-background-color: #101010;" BorderPane.alignment="CENTER">
          <children>
-            <Text fill="#6fbf4e" layoutX="193.0" layoutY="304.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Update Vehicle By ID:" />
-            <Text fill="#6fbf4e" layoutX="127.0" layoutY="379.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Type:" />
-            <Text fill="#6fbf4e" layoutX="127.0" layoutY="416.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Year:" />
+            <Text fill="#6fbf4e" layoutX="107.0" layoutY="372.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Make:" textAlignment="RIGHT" />
+            <Text fill="#6fbf4e" layoutX="113.0" layoutY="409.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Year:" textAlignment="RIGHT" />
             <Text fill="WHITE" layoutX="95.0" layoutY="181.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="134.13671875" />
             <Text fill="WHITE" layoutX="95.0" layoutY="229.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="134.13671875" />
             <Text fill="WHITE" layoutX="95.0" layoutY="271.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="134.13671875" />
-            <Button fx:id="listVehiclesButton" layoutX="8.0" layoutY="287.0" mnemonicParsing="false" onAction="#handleListVehicles" style="-fx-background-color: #6fbf4e;" text="List Vehicles" textFill="WHITE" />
-            <TextField fx:id="vehicleIdTextField" layoutX="319.0" layoutY="287.0" prefHeight="25.0" prefWidth="42.0" promptText="123.." />
-            <Text fill="#6fbf4e" layoutX="80.0" layoutY="453.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Price Per Day:" />
-            <Text fill="#6fbf4e" layoutX="317.0" layoutY="373.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Milage:" />
-            <Text fill="#6fbf4e" layoutX="318.0" layoutY="410.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Model:" />
-            <Button fx:id="updateVehicleButton" layoutX="289.0" layoutY="436.0" mnemonicParsing="false" onAction="#handleUpdateVehicle" style="-fx-background-color: #6fbf4e;" text="Update Vehicle" textFill="WHITE" />
-            <Button fx:id="addVehicleButton" layoutX="397.0" layoutY="436.0" mnemonicParsing="false" onAction="#handleAddVehicle" style="-fx-background-color: #6fbf4e;" text="Add Vehicle" textFill="WHITE" />
-            <Button fx:id="uploadButton" layoutX="266.0" layoutY="511.0" mnemonicParsing="false" onAction="#handleVehicleFileUpload" style="-fx-background-color: #6fbf4e;" text="Upload" textFill="WHITE" />
-            <TextField fx:id="mileageTextField" layoutX="364.0" layoutY="356.0" prefHeight="25.0" prefWidth="114.0" />
-            <TextField fx:id="modelTextField" layoutX="364.0" layoutY="393.0" prefHeight="25.0" prefWidth="114.0" />
-            <TextField fx:id="typeTextField" layoutX="163.0" layoutY="362.0" prefHeight="25.0" prefWidth="114.0" />
-            <TextField fx:id="priceTextField" layoutX="162.0" layoutY="436.0" prefHeight="25.0" prefWidth="114.0" />
-            <TextField fx:id="yearTextField" layoutX="162.0" layoutY="399.0" prefHeight="25.0" prefWidth="114.0" />
-            <Text fill="#6fbf4e" layoutX="9.0" layoutY="528.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Upload Vehicle .txt File:" />
-            <TextField fx:id="uploadVehiclesTextField" layoutX="140.0" layoutY="511.0" prefHeight="25.0" prefWidth="114.0" promptText="../vehicle_file_path.txt" text="vehicles.txt" />
-            <Text fill="#727272" layoutX="176.0" layoutY="328.0" strokeType="OUTSIDE" strokeWidth="0.0" text="(Leave ID field empty to add a vehicle)" />
-            <Button fx:id="deleteButton" layoutX="496.0" layoutY="511.0" mnemonicParsing="false" onAction="#handleDeleteVehicle" style="-fx-background-color: ff224a;" text="Delete" textFill="WHITE" />
-            <Text fill="#6fbf4e" layoutX="329.0" layoutY="528.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Delete Vehicle By ID:" />
-            <TextField fx:id="deleteVehicleIdTextField" layoutX="443.0" layoutY="511.0" prefHeight="25.0" prefWidth="42.0" promptText="123.." />
-            <TextArea fx:id="vehiclesListTextArea" layoutY="29.0" prefHeight="248.0" prefWidth="558.0" promptText="Select &quot;List Vehicles&quot; Bellow to see all vehicles." />
+            <Text fill="#6fbf4e" layoutX="66.0" layoutY="446.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Price Per Day:" textAlignment="RIGHT" />
+            <Text fill="#6fbf4e" layoutX="301.0" layoutY="409.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Milage:" textAlignment="RIGHT" />
+            <Text fill="#6fbf4e" layoutX="302.0" layoutY="372.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Model:" textAlignment="RIGHT" />
+            <Button fx:id="addVehicleButton" layoutX="381.0" layoutY="464.0" mnemonicParsing="false" onAction="#handleAddVehicle" style="-fx-background-color: #6fbf4e;" text="Add Vehicle" textFill="WHITE" />
+            <Button fx:id="uploadButton" layoutX="259.0" layoutY="511.0" mnemonicParsing="false" onAction="#handleVehicleFileUpload" style="-fx-background-color: #6fbf4e;" text="Upload" textFill="WHITE" />
+            <TextField fx:id="mileageTextField" layoutX="348.0" layoutY="392.0" prefHeight="25.0" prefWidth="114.0" text="156684" />
+            <TextField fx:id="modelTextField" layoutX="347.0" layoutY="355.0" prefHeight="25.0" prefWidth="114.0" text="Corolla" />
+            <TextField fx:id="makeTextField" layoutX="146.0" layoutY="355.0" prefHeight="25.0" prefWidth="114.0" text="Toyota" />
+            <TextField fx:id="priceTextField" layoutX="145.0" layoutY="429.0" prefHeight="25.0" prefWidth="114.0" text="13.51" />
+            <TextField fx:id="yearTextField" layoutX="145.0" layoutY="392.0" prefHeight="25.0" prefWidth="114.0" text="2019" />
+            <Text fill="#6fbf4e" layoutX="10.0" layoutY="528.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Upload Vehicle .txt File:" />
+            <TextField fx:id="uploadVehiclesTextField" layoutX="137.0" layoutY="511.0" prefHeight="25.0" prefWidth="114.0" promptText="../vehicle_file_path.txt" text="vehicles.txt" />
+            <Button fx:id="deleteButton" layoutX="496.0" layoutY="286.0" mnemonicParsing="false" onAction="#handleDeleteVehicle" style="-fx-background-color: ff224a;" text="Delete" textFill="WHITE" />
+            <Text fill="#6fbf4e" layoutX="317.0" layoutY="446.0" strokeType="OUTSIDE" strokeWidth="0.0" text="VIN:" textAlignment="RIGHT" />
+            <TextField fx:id="vinTextField" layoutX="347.0" layoutY="429.0" prefHeight="25.0" prefWidth="114.0" text="SG681E81" />
+            <Text fill="#6fbf4e" layoutX="76.0" layoutY="336.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Image Path:" textAlignment="RIGHT" />
+            <TextField fx:id="imagePathTextField" layoutX="147.0" layoutY="319.0" prefHeight="25.0" prefWidth="114.0" promptText="../vehicle_file_path.txt" text="E:\Documents\College\Repo\Java\zoomly_project\src\main\resources\vehicle_imgs\2019_corolla.png" />
+            <TableView fx:id="vehiclesTableView" editable="true" layoutY="29.0" prefHeight="248.0" prefWidth="558.0" style="-fx-background-color: black;">
+              <columns>
+                <TableColumn fx:id="idColumn" editable="false" prefWidth="26.0" text="ID" />
+                <TableColumn fx:id="makeColumn" prefWidth="65.0" text="make" />
+                  <TableColumn fx:id="modelColumn" prefWidth="64.0" text="model" />
+                  <TableColumn fx:id="yearColumn" prefWidth="60.0" text="year" />
+                  <TableColumn fx:id="mileageColumn" prefWidth="68.0" text="mileage" />
+                  <TableColumn fx:id="vinColumn" prefWidth="60.0" text="vin" />
+                  <TableColumn fx:id="imagePathColumn" prefWidth="91.0" text="image_path" />
+                  <TableColumn fx:id="descriptionColumn" prefWidth="79.0" text="description" />
+                  <TableColumn fx:id="pricePerDayColumn" prefWidth="44.0" text="price_per_day" />
+              </columns>
+            </TableView>
+            <Text fill="#6fbf4e" layoutX="277.0" layoutY="336.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Description:" textAlignment="RIGHT" />
+            <TextField fx:id="descriptionTextField" layoutX="347.0" layoutY="319.0" prefHeight="25.0" prefWidth="114.0" promptText="../vehicle_file_path.txt" text="test" />
+            <Label fx:id="errorLabel" layoutX="7.0" layoutY="462.0" prefHeight="44.0" prefWidth="365.0" textFill="#ff2525" />
          </children>
       </AnchorPane>
    </center>

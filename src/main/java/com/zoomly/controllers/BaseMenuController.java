@@ -25,10 +25,18 @@ public class BaseMenuController {
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.setTitle(title);
+
+            if (loader.getController() instanceof BaseMenuController) {
+                ((BaseMenuController) loader.getController()).refreshData();
+            }
         } catch (Exception e) {
             e.printStackTrace();
             showError("Error loading scene: " + e.getMessage());
         }
+    }
+
+    protected void refreshData() {
+        // Default implementation does nothing
     }
 
     private void showError(String message) {

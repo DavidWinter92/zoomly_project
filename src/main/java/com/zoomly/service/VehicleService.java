@@ -1,24 +1,26 @@
 package com.zoomly.service;
 
+import com.zoomly.dao.VehicleDao;
 import com.zoomly.model.Vehicle;
-import com.zoomly.repository.VehicleRepository;
-import com.zoomly.util.Validator;
+import com.zoomly.util.VehicleValidator;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
 /**
  * VehicleService.java
- * This class provides the business logic for vehicle-related operations including
- * adding, updating, and managing vehicles in the rental system.
+ * Service class for managing vehicle-related operations.
+ * Provides methods for adding, retrieving, updating, and deleting vehicles.
+ * Ensures data validation and handles exceptions for vehicle data processing.
  */
 
 public class VehicleService {
     private static VehicleService instance;
-    private final VehicleRepository vehicleRepository;
+    private final VehicleDao vehicleDao;
 
     private VehicleService() {
-        this.vehicleRepository = VehicleRepository.getInstance();
+        this.vehicleDao = new VehicleDao();
     }
 
     public static VehicleService getInstance() {
@@ -28,49 +30,59 @@ public class VehicleService {
         return instance;
     }
 
-    public Vehicle addVehicle(String carType, String model, int year,
-                              double mileage, double pricePerDay) {
-        if (!Validator.isValidCarType(carType)) {
-            throw new IllegalArgumentException("Invalid car type");
-        }
-        if (!Validator.isValidYear(year)) {
-            throw new IllegalArgumentException("Invalid year");
-        }
-        if (mileage < 0) {
-            throw new IllegalArgumentException("Mileage cannot be negative");
-        }
-        if (pricePerDay <= 0) {
-            throw new IllegalArgumentException("Price per day must be positive");
+    public Vehicle addVehicle(String vin, String make, String model, int year, double mileage, double pricePerDay, String imagePath, String description) {
+        VehicleValidator.validate(vin, make, model, year, mileage, pricePerDay);
+
+        if (getVehicleByVin(vin).isPresent()) {
+            throw new IllegalArgumentException("A vehicle with VIN " + vin + " already exists.");
         }
 
-        Vehicle vehicle = new Vehicle(0, carType, model, year, mileage, pricePerDay);
-        return vehicleRepository.save(vehicle);
+        Vehicle vehicle = new Vehicle(0, vin, make, model, year, mileage, pricePerDay, imagePath, description);
+
+        try {
+            vehicleDao.addVehicle(vin, make, model, year, mileage, pricePerDay, imagePath, description);
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to add vehicle to the database: " + e.getMessage());
+        }
+
+        return vehicle;
+    }
+
+    public Optional<Vehicle> getVehicleByVin(String vin) {
+        return vehicleDao.getVehicleByVin(vin);
     }
 
     public List<Vehicle> getAllVehicles() {
-        return vehicleRepository.findAll();
+        try {
+            return vehicleDao.findAll();
+        } catch (SQLException e) {
+            System.err.println("Error retrieving vehicles: " + e.getMessage());
+            throw new RuntimeException("Failed to retrieve vehicles from the database.", e);
+        }
     }
 
-    public Optional<Vehicle> getVehicleById(int id) {
-        return vehicleRepository.findById(id);
+    public Optional<Vehicle> getVehicleById(int vehicleId) {
+        try {
+            return vehicleDao.getVehicleById(vehicleId);
+        } catch (Exception e) {
+            System.err.println("Error fetching vehicle by ID: " + e.getMessage());
+            return Optional.empty();
+        }
     }
 
-    public List<Vehicle> getVehiclesByType(String carType) {
-        return vehicleRepository.findByType(carType);
+    public void updateVehicle(int id, String vin, String make, String model, int year, double mileage, double pricePerDay, String imagePath, String description) {
+        try {
+            vehicleDao.updateVehicle(id, vin, make, model, year, mileage, pricePerDay, imagePath, description);
+        } catch (SQLException e) {
+            throw new IllegalArgumentException("Error updating vehicle: " + e.getMessage());
+        }
     }
 
     public void deleteVehicle(int id) {
-        vehicleRepository.delete(id);
+        vehicleDao.deleteVehicle(id);
     }
 
-    public Vehicle updateVehicle(Vehicle vehicle) {
-        if (!vehicleRepository.findById(vehicle.getId()).isPresent()) {
-            throw new IllegalArgumentException("Vehicle not found");
-        }
-        return vehicleRepository.save(vehicle);
-    }
-
-    public VehicleRepository getVehicleRepository() {
-        return vehicleRepository;
+    public VehicleDao getVehicleDao() {
+        return vehicleDao;
     }
 }

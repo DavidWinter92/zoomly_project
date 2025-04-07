@@ -3,16 +3,21 @@ package com.zoomly.controllers;
 import com.zoomly.model.User;
 import com.zoomly.service.UserService;
 import com.zoomly.util.FileLoader;
-import com.zoomly.util.Validator;
+import com.zoomly.util.UserValidator;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * ManageUsersController.java
@@ -21,6 +26,7 @@ import java.util.Optional;
  */
 
 public class ManageUsersController extends BaseMenuController {
+
     @FXML
     private Button logoutButton;
     @FXML
@@ -32,18 +38,12 @@ public class ManageUsersController extends BaseMenuController {
     @FXML
     private Button adminMenuButton;
     @FXML
-    private Button listUsersButton;
-    @FXML
-    private Button updateUserButton;
-    @FXML
     private Button addUserButton;
     @FXML
-    private Button deleteButton;
-    @FXML
     private Button uploadFileButton;
-
     @FXML
-    private TextField userIdTextField;
+    private Button deleteButton;
+
     @FXML
     private TextField firstNameTextField;
     @FXML
@@ -57,11 +57,25 @@ public class ManageUsersController extends BaseMenuController {
     @FXML
     private TextField uploadUsersTextField;
     @FXML
-    private TextField deleteUserIdTextField;
+    private TableView<User> usersTableView;
+
     @FXML
-    private TextArea usersListTextArea;
+    private TableColumn<User, Integer> idColumn;
+    @FXML
+    private TableColumn<User, String> firstNameColumn;
+    @FXML
+    private TableColumn<User, String> lastNameColumn;
+    @FXML
+    private TableColumn<User, String> emailColumn;
+    @FXML
+    private TableColumn<User, String> passwordColumn;
+    @FXML
+    private TableColumn<User, String> accountTypeColumn;
+    @FXML
+    private TextField errorTextField;
 
     private UserService userService;
+    private ObservableList<User> userList;
 
     public ManageUsersController() {
         this.userService = UserService.getInstance();
@@ -69,112 +83,122 @@ public class ManageUsersController extends BaseMenuController {
 
     @FXML
     private void initialize() {
-        loadCurrentUserData();
-        manageVehiclesButton.setOnAction(this::handleManageVehicles);
-        manageReservationsButton.setOnAction(this::handleManageReservations);
-        editAccountButton.setOnAction(this::handleEditAccount);
-        adminMenuButton.setOnAction(this::handleAdminMenu);
-        logoutButton.setOnAction(this::handleLogout);
+        setupTableView();
+        loadUsersIntoTable();
     }
 
-    private void loadCurrentUserData() {
-        User currentUser = userService.getCurrentUser();
-    }
+    private void setupTableView() {
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        firstNameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+        lastNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastName"));
+        emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
+        passwordColumn.setCellValueFactory(new PropertyValueFactory<>("password"));
+        accountTypeColumn.setCellValueFactory(new PropertyValueFactory<>("accountType"));
 
-    @FXML
-    private void handleListUsers(ActionEvent event) {
-        List<User> users = userService.getAllUsers();
-        StringBuilder userList = new StringBuilder("Users:\n");
-        for (User user : users) {
-            userList.append(user.toString()).append("\n");
-        }
-        usersListTextArea.setText(userList.toString());
-    }
+        firstNameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        lastNameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        emailColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        passwordColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        accountTypeColumn.setCellFactory(TextFieldTableCell.forTableColumn());
 
-    @FXML
-    private void handleUpdateUser(ActionEvent event) {
-        String idText = userIdTextField.getText();
-        if (idText.isEmpty()) {
-            usersListTextArea.setText("Please enter a user ID to update.");
-            return;
-        }
+        firstNameColumn.setOnEditCommit(event -> {
+            User user = event.getRowValue();
+            String originalValue = user.getFirstName();
+            String newValue = event.getNewValue();
 
-        try {
-            int userId = Integer.parseInt(idText);
-            Optional<User> optionalUser = userService.getUserById(userId);
-            if (optionalUser.isPresent()) {
-                User user = optionalUser.get();
-
-                StringBuilder errorMessages = new StringBuilder();
-
-                String firstName = firstNameTextField.getText();
-                if (firstName.isEmpty()) {
-                    errorMessages.append("First name cannot be empty.\n");
-                } else if (!firstName.matches("[a-zA-Z]+")) {
-                    errorMessages.append("Invalid first name: '").append(firstName).append("' cannot use numbers or special characters.\n");
-                } else {
-                    user.setFirstName(firstName);
-                }
-
-                String lastName = lastNameTextField.getText();
-                if (lastName.isEmpty()) {
-                    errorMessages.append("Last name cannot be empty.\n");
-                } else if (!lastName.matches("[a-zA-Z]+")) {
-                    errorMessages.append("Invalid last name: '").append(lastName).append("' cannot use numbers or special characters.\n");
-                } else {
-                    user.setLastName(lastName);
-                }
-
-                String email = emailTextField.getText();
-                if (email.isEmpty()) {
-                    errorMessages.append("Email cannot be empty.\n");
-                } else if (!Validator.isValidEmail(email)) {
-                    errorMessages.append("Invalid email format. Valid format: example@domain.com\n");
-                } else {
-                    user.setEmail(email);
-                }
-
-                String password = passwordTextField.getText();
-                if (password.isEmpty()) {
-                    errorMessages.append("Password cannot be empty.\n");
-                } else if (password.length() < 8 || !password.matches(".*[0-9].*") || !password.matches(".*[!@#$%^&*].*")) {
-                    errorMessages.append("Password must be at least 8 characters long and contain 1 number and 1 special character.\n");
-                } else {
-                    user.setPassword(password);
-                }
-
-                String accountType = accountTypeTextField.getText();
-                if (accountType.isEmpty()) {
-                    errorMessages.append("Account type cannot be empty.\n");
-                } else if (!Validator.isValidAccountType(accountType)) {
-                    errorMessages.append("Account type must be 'user' or 'administrator'.\n");
-                } else {
-                    user.setAccountType(accountType);
-                }
-
-                if (errorMessages.length() > 0) {
-                    usersListTextArea.setText(errorMessages.toString());
-                    return;
-                }
-
+            user.setFirstName(newValue);
+            try {
+                UserValidator.validate(user);
                 userService.updateUser(user);
-                usersListTextArea.setText("User updated: " + user);
-            } else {
-                usersListTextArea.setText("User not found.");
+            } catch (IllegalArgumentException e) {
+                errorTextField.setText(e.getMessage());
+                user.setFirstName(originalValue);
+                usersTableView.refresh();
+                event.consume();
             }
-        } catch (NumberFormatException e) {
-            usersListTextArea.setText("Invalid ID format.");
-        }
+        });
+
+        lastNameColumn.setOnEditCommit(event -> {
+            User user = event.getRowValue();
+            String originalValue = user.getLastName();
+            String newValue = event.getNewValue();
+
+            user.setLastName(newValue);
+            try {
+                UserValidator.validate(user);
+                userService.updateUser(user);
+            } catch (IllegalArgumentException e) {
+                errorTextField.setText(e.getMessage());
+                user.setLastName(originalValue);
+                usersTableView.refresh();
+                event.consume();
+            }
+        });
+
+        emailColumn.setOnEditCommit(event -> {
+            User user = event.getRowValue();
+            String originalValue = user.getEmail();
+            String newValue = event.getNewValue();
+
+            user.setEmail(newValue);
+            try {
+                UserValidator.validate(user);
+                userService.updateUser(user);
+            } catch (IllegalArgumentException e) {
+                errorTextField.setText(e.getMessage());
+                user.setEmail(originalValue);
+                usersTableView.refresh();
+                event.consume();
+            }
+        });
+
+        passwordColumn.setOnEditCommit(event -> {
+            User user = event.getRowValue();
+            String originalValue = user.getPassword();
+            String newValue = event.getNewValue();
+
+            user.setPassword(newValue);
+            try {
+                UserValidator.validate(user);
+                userService.updateUser(user);
+            } catch (IllegalArgumentException e) {
+                errorTextField.setText(e.getMessage());
+                user.setPassword(originalValue);
+                usersTableView.refresh();
+                event.consume();
+            }
+        });
+
+        accountTypeColumn.setOnEditCommit(event -> {
+            User user = event.getRowValue();
+            String originalValue = user.getAccountType();
+            String newValue = event.getNewValue();
+
+            user.setAccountType(newValue);
+            try {
+                UserValidator.validate(user);
+                userService.updateUser(user);
+            } catch (IllegalArgumentException e) {
+                errorTextField.setText(e.getMessage());
+                user.setAccountType(originalValue);
+                usersTableView.refresh();
+                event.consume();
+            }
+        });
+
+
+        userList = FXCollections.observableArrayList();
+        usersTableView.setItems(userList);
+        usersTableView.setEditable(true);
+    }
+
+    private void loadUsersIntoTable() {
+        List<User> users = userService.getAllUsers();
+        userList.setAll(users);
     }
 
     @FXML
     private void handleAddUser(ActionEvent event) {
-        String idText = userIdTextField.getText();
-        if (!idText.isEmpty()) {
-            usersListTextArea.setText("ID field must be empty to add a user.");
-            return;
-        }
-
         try {
             String firstName = firstNameTextField.getText();
             String lastName = lastNameTextField.getText();
@@ -182,86 +206,43 @@ public class ManageUsersController extends BaseMenuController {
             String password = passwordTextField.getText();
             String accountType = accountTypeTextField.getText();
 
-            StringBuilder errorMessages = new StringBuilder();
-
-            if (firstName.isEmpty()) {
-                errorMessages.append("First name cannot be empty.\n");
-            } else if (!firstName.matches("[a-zA-Z]+")) {
-                errorMessages.append("Invalid first name: '").append(firstName).append("' cannot use numbers or special characters.\n");
-            }
-
-            if (lastName.isEmpty()) {
-                errorMessages.append("Last name cannot be empty.\n");
-            } else if (!lastName.matches("[a-zA-Z]+")) {
-                errorMessages.append("Invalid last name: '").append(lastName).append("' cannot use numbers or special characters.\n");
-            }
-
-            if (email.isEmpty()) {
-                errorMessages.append("Email cannot be empty.\n");
-            } else if (!Validator.isValidEmail(email)) {
-                errorMessages.append("Invalid email format. Valid format: example@domain.com\n");
-            }
-
-            if (password.isEmpty()) {
-                errorMessages.append("Password cannot be empty.\n");
-            } else if (password.length() < 8 || !password.matches(".*[0-9].*") || !password.matches(".*[!@#$%^&*].*")) {
-                errorMessages.append("Password must be at least 8 characters long and contain 1 number and 1 special character.\n");
-            }
-
-            if (accountType.isEmpty()) {
-                errorMessages.append("Account type cannot be empty.\n");
-            } else if (!Validator.isValidAccountType(accountType)) {
-                errorMessages.append("Account type must be 'user' or 'administrator'.\n");
-            }
-
-            if (errorMessages.length() > 0) {
-                usersListTextArea.setText(errorMessages.toString());
+            if (userService.isEmailRegistered(email)) {
+                errorTextField.setText("Email is already registered.");
                 return;
             }
 
-            User user = userService.registerUser(firstName, lastName, email, password, accountType);
-            usersListTextArea.setText("User added: " + user);
+            User newUser = new User(0, firstName, lastName, email, password, accountType);
+            UserValidator.validate(newUser);
+
+            userService.registerUser(firstName, lastName, email, password, accountType);
+            loadUsersIntoTable();
+            errorTextField.setText("User added successfully.");
         } catch (IllegalArgumentException e) {
-            usersListTextArea.setText(e.getMessage());
+            errorTextField.setText(e.getMessage());
         }
     }
 
     @FXML
     private void handleDeleteUser(ActionEvent event) {
-        String idText = deleteUserIdTextField.getText();
-        if (idText.isEmpty()) {
-            usersListTextArea.setText("Please enter a user ID to delete.");
+        User selectedUser = usersTableView.getSelectionModel().getSelectedItem();
+        if (selectedUser == null) {
+            errorTextField.setText("Please select a user to delete.");
             return;
         }
 
         try {
-            int userId = Integer.parseInt(idText);
-
-            Optional<User> optionalUser = userService.getUserById(userId);
-            if (optionalUser.isEmpty()) {
-                usersListTextArea.setText("User " + userId + " does not exist.");
-                return;
-            }
-
-            User currentUser = userService.getCurrentUser();
-            if (currentUser != null && currentUser.getId() == userId) {
-                usersListTextArea.setText("Cannot delete the currently logged-in user.");
-                return;
-            }
-
-            userService.deleteUser(userId);
-            usersListTextArea.setText("User deleted: ID " + userId);
-        } catch (NumberFormatException e) {
-            usersListTextArea.setText("Invalid ID format.");
+            userService.deleteUser(selectedUser.getId());
+            loadUsersIntoTable();
+            errorTextField.setText("User deleted successfully.");
         } catch (Exception e) {
-            usersListTextArea.setText("Error deleting user: " + e.getMessage());
+            errorTextField.setText("Error deleting user: " + e.getMessage());
         }
     }
 
     @FXML
     private void handleUserFileUpload(ActionEvent event) {
         String filePath = uploadUsersTextField.getText();
-        FileLoader fileLoader = new FileLoader(userService.getUserRepository(), null);
+        FileLoader fileLoader = new FileLoader(userService.getUserDao(), null);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(outputStream);
@@ -270,6 +251,7 @@ public class ManageUsersController extends BaseMenuController {
 
         try {
             fileLoader.loadUsers(filePath);
+            loadUsersIntoTable();
         } catch (Exception e) {
             System.out.println("Failed to load users: " + e.getMessage());
         } finally {
@@ -277,7 +259,7 @@ public class ManageUsersController extends BaseMenuController {
         }
 
         String output = outputStream.toString();
-        usersListTextArea.setText(output);
+        errorTextField.setText(output);
     }
 
     @FXML

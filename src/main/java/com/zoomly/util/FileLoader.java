@@ -1,14 +1,12 @@
 package com.zoomly.util;
 
+import com.zoomly.dao.UserDao;
+import com.zoomly.dao.VehicleDao;
 import com.zoomly.model.User;
-import com.zoomly.model.Vehicle;
-import com.zoomly.repository.UserRepository;
-import com.zoomly.repository.VehicleRepository;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * FileLoader.java
@@ -16,12 +14,12 @@ import java.util.List;
  */
 
 public class FileLoader {
-    private final UserRepository userRepository;
-    private final VehicleRepository vehicleRepository;
+    private final UserDao userDao;
+    private final VehicleDao vehicleDao;
 
-    public FileLoader(UserRepository userRepository, VehicleRepository vehicleRepository) {
-        this.userRepository = userRepository;
-        this.vehicleRepository = vehicleRepository;
+    public FileLoader(UserDao userDao, VehicleDao vehicleDao) {
+        this.userDao = userDao;
+        this.vehicleDao = vehicleDao;
     }
 
     /**
@@ -42,19 +40,16 @@ public class FileLoader {
                 String password = parts[3].trim();
                 String accountType = parts[4].trim();
 
-                if (!Validator.isValidEmail(email)) {
-                    System.out.println("Warning: Invalid email format for " + email + ". Skipping user.");
-                    continue;
-                }
+                try {
+                    User newUser = new User(0, firstName, lastName, email, password, accountType);
+                    UserValidator.validate(newUser);
 
-                int userId = userRepository.getNextId();
-                User user = new User(firstName, lastName, email, password, accountType, userId);
-                User savedUser = userRepository.save(user);
-
-                if (savedUser == null) {
-                    System.out.println("Warning: Email " + email + " already exists. Skipping user.");
-                } else {
-                    System.out.println("User registered: " + savedUser);
+                    userDao.addUser(firstName, lastName, email, password, accountType);
+                    System.out.println("User registered: " + firstName + " " + lastName);
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Warning: " + e.getMessage() + " for " + email + ". Skipping user.");
+                } catch (Exception e) {
+                    System.out.println("Warning: " + e.getMessage());
                 }
             } else {
                 System.out.println("Warning: Invalid line format: " + line);
@@ -66,59 +61,34 @@ public class FileLoader {
     /**
      * method: loadVehicles
      * parameters: String filePath - Path to the vehicles text file
-     * return: List<Vehicle> - List of vehicles loaded from the file
+     * return: void
      * purpose: Loads and validates vehicle data from a text file.
      */
-    public List<Vehicle> loadVehicles(String filePath) throws IOException {
-        List<Vehicle> vehicles = new ArrayList<>();
-        int lineNumber = 0;
+    public void loadVehicles(String filePath) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(filePath));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            String[] parts = line.split(",");
+            if (parts.length == 8) {
+                String vin = parts[0].trim();
+                String make = parts[1].trim();
+                String model = parts[2].trim();
+                int year = Integer.parseInt(parts[3].trim());
+                double mileage = Double.parseDouble(parts[4].trim());
+                double pricePerDay = Double.parseDouble(parts[5].trim());
+                String imagePath = parts[6].trim();
+                String description = parts[7].trim();
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                lineNumber++;
                 try {
-                    String[] fields = line.split(",");
-                    if (fields.length != 5) {
-                        System.out.println("Warning: Invalid number of fields at line " + lineNumber);
-                        continue;
-                    }
-
-                    String carType = fields[0].trim();
-                    String model = fields[1].trim();
-                    int year = Integer.parseInt(fields[2].trim());
-                    double mileage = Double.parseDouble(fields[3].trim());
-                    double pricePerDay = Double.parseDouble(fields[4].trim());
-
-                    // Validate all fields
-                    if (!Validator.isValidCarType(carType)) {
-                        System.out.println("Warning: Invalid car type at line " + lineNumber);
-                        continue;
-                    }
-                    if (!Validator.isValidYear(year)) {
-                        System.out.println("Warning: Invalid year at line " + lineNumber);
-                        continue;
-                    }
-                    if (mileage < 0) {
-                        System.out.println("Warning: Invalid mileage at line " + lineNumber);
-                        continue;
-                    }
-                    if (pricePerDay <= 0) {
-                        System.out.println("Warning: Invalid price per day at line " + lineNumber);
-                        continue;
-                    }
-
-                    Vehicle vehicle = new Vehicle(0, carType, model, year, mileage, pricePerDay);
-                    vehicleRepository.save(vehicle); // Save to the repository
-                    vehicles.add(vehicle);
-                    System.out.println("Created and saved vehicle: " + vehicle);
-                } catch (NumberFormatException e) {
-                    System.out.println("Warning: Invalid number format at line " + lineNumber);
+                    vehicleDao.addVehicle(vin, make, model, year, mileage, pricePerDay, imagePath, description);
+                    System.out.println("Vehicle registered: " + make + " " + model + " (VIN: " + vin + ")");
                 } catch (Exception e) {
-                    System.out.println("Warning: Error processing line " + lineNumber + ": " + e.getMessage());
+                    System.out.println("Warning: " + e.getMessage());
                 }
+            } else {
+                System.out.println("Warning: Invalid line format: " + line);
             }
         }
-        return vehicles;
+        reader.close();
     }
 }

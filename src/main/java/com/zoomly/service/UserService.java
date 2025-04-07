@@ -1,8 +1,10 @@
 package com.zoomly.service;
 
+import com.zoomly.dao.UserDao;
 import com.zoomly.model.User;
-import com.zoomly.repository.UserRepository;
-import com.zoomly.util.Validator;
+import com.zoomly.util.UserValidator;
+
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,11 +16,11 @@ import java.util.Optional;
 
 public class UserService {
     private static UserService instance;
-    private final UserRepository userRepository;
+    private final UserDao userDao;
     private User currentUser;
 
     private UserService() {
-        this.userRepository = UserRepository.getInstance();
+        this.userDao = new UserDao();
     }
 
     public static UserService getInstance() {
@@ -28,61 +30,20 @@ public class UserService {
         return instance;
     }
 
-    public UserRepository getUserRepository() {
-        return userRepository;
-    }
-
-    public User saveUser(User user) {
-        return userRepository.save(user);
-    }
-
-    public User registerUser(String firstName, String lastName, String email,
-                             String password, String accountType) {
-        // Validate input
-        if (!Validator.isValidName(firstName)) {
-            throw new IllegalArgumentException("Invalid first name");
-        }
-        if (!Validator.isValidName(lastName)) {
-            throw new IllegalArgumentException("Invalid last name");
-        }
-        if (!Validator.isValidEmail(email)) {
-            throw new IllegalArgumentException("Invalid email format");
-        }
-        if (!Validator.isValidPassword(password)) {
-            throw new IllegalArgumentException("Invalid password format");
-        }
-        if (!Validator.isValidAccountType(accountType)) {
-            throw new IllegalArgumentException("Invalid account type");
-        }
-
-        // Check if email already exists
-        if (userRepository.findByEmail(email).isPresent()) {
-            throw new IllegalArgumentException("Email already registered");
-        }
-
-        int userId = userRepository.getNextId();
-        User user = new User(firstName, lastName, email, password, accountType, userId);
-        return userRepository.save(user);
-    }
-
     public Optional<User> login(String email, String password) {
-        Optional<User> userOptional = userRepository.findByEmail(email);
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            if (user.getPassword().equals(password)) {
-                setCurrentUser(user);
-                return Optional.of(user);
-            }
+        Optional<User> userOptional = userDao.getUserByEmail(email);
+        if (userOptional.isPresent() && userOptional.get().getPassword().equals(password)) {
+            setCurrentUser(userOptional.get());
+            return userOptional;
         }
         return Optional.empty();
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-
-    public Optional<User> getUserById(int id) {
-        return userRepository.findById(id);
+    public User registerUser(String firstName, String lastName, String email, String password, String accountType) {
+        User user = new User(firstName, lastName, email, password, accountType);
+        UserValidator.validate(user);
+        userDao.addUser(firstName, lastName, email, password, accountType);
+        return user;
     }
 
     public User getCurrentUser() {
@@ -93,64 +54,86 @@ public class UserService {
         this.currentUser = user;
     }
 
-    public void deleteUser(int id) {
-        userRepository.delete(id);
-    }
-
-    public User updateUser(User user) {
-        if (!userRepository.findById(user.getId()).isPresent()) {
-            throw new IllegalArgumentException("User not found");
-        }
-        return userRepository.save(user);
+    public UserDao getUserDao() {
+        return userDao;
     }
 
     public void updateEmail(int userId, String newEmail) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        if (!Validator.isValidEmail(newEmail)) {
-            throw new IllegalArgumentException("Invalid email format");
+        try {
+            userDao.updateEmail(userId, newEmail);
+            refreshCurrentUser(userId);
+        } catch (SQLException e) {
+            throw new UserServiceException("Error updating email for user ID " + userId, e);
         }
-        user.setEmail(newEmail);
-        userRepository.save(user);
     }
 
     public void updateFirstName(int userId, String newFirstName) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        if (!Validator.isValidName(newFirstName)) {
-            throw new IllegalArgumentException("Invalid first name");
+        try {
+            userDao.updateFirstName(userId, newFirstName);
+            refreshCurrentUser(userId);
+        } catch (SQLException e) {
+            throw new UserServiceException("Error updating first name for user ID " + userId, e);
         }
-        user.setFirstName(newFirstName);
-        userRepository.save(user);
     }
 
     public void updateLastName(int userId, String newLastName) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        if (!Validator.isValidName(newLastName)) {
-            throw new IllegalArgumentException("Invalid last name");
+        try {
+            userDao.updateLastName(userId, newLastName);
+            refreshCurrentUser(userId);
+        } catch (SQLException e) {
+            throw new UserServiceException("Error updating last name for user ID " + userId, e);
         }
-        user.setLastName(newLastName);
-        userRepository.save(user);
     }
 
     public void updatePassword(int userId, String newPassword) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        if (!Validator.isValidPassword(newPassword)) {
-            throw new IllegalArgumentException("Invalid password format");
+        try {
+            userDao.updatePassword(userId, newPassword);
+            refreshCurrentUser(userId);
+        } catch (SQLException e) {
+            throw new UserServiceException("Error updating password for user ID " + userId, e);
         }
-        user.setPassword(newPassword);
-        userRepository.save(user);
     }
 
-    public void updateAccountType(int userId, String newAccountType) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        if (!Validator.isValidAccountType(newAccountType)) {
-            throw new IllegalArgumentException("Invalid account type");
+    // New method to update a user
+    public void updateUser(User user) {
+        try {
+            userDao.updateEmail(user.getId(), user.getEmail());
+            userDao.updateFirstName(user.getId(), user.getFirstName());
+            userDao.updateLastName(user.getId(), user.getLastName());
+            userDao.updatePassword(user.getId(), user.getPassword());
+            userDao.updateAccountType(user.getId(), user.getAccountType());
+
+        } catch (SQLException e) {
+            throw new UserServiceException("Error updating user ID " + user.getId(), e);
         }
-        user.setAccountType(newAccountType);
-        userRepository.save(user);
+    }
+
+    public void deleteUser(int userId) {
+        try {
+            userDao.deleteUser(userId);
+            if (currentUser != null && currentUser.getId() == userId) {
+                currentUser = null;
+            }
+        } catch (SQLException e) {
+            throw new UserServiceException("Error deleting user ID " + userId, e);
+        }
+    }
+
+    public boolean isEmailRegistered(String email) {
+        List<User> users = getAllUsers();
+        for (User user : users) {
+            if (user.getEmail().equalsIgnoreCase(email)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public List<User> getAllUsers() {
+        return userDao.getAllUsers();
+    }
+
+    private void refreshCurrentUser(int userId) {
+        currentUser = userDao.getUserById(userId).orElse(null);
     }
 }

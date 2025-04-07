@@ -1,10 +1,8 @@
 package com.zoomly.controllers;
 
 import com.zoomly.model.User;
-import com.zoomly.repository.VehicleRepository;
 import com.zoomly.service.UserService;
 import com.zoomly.service.VehicleService;
-import com.zoomly.util.FileLoader;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,26 +12,19 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+
 import java.io.IOException;
 import java.util.Optional;
 
 /**
  * LoginController.java
- * Controller class for managing user login and file uploads.
+ * Controller class for managing user login.
  * Handles user authentication and scene transitions for the application.
  */
 
 public class LoginController {
     @FXML
-    private TextField uploadUsersTextField;
-    @FXML
-    private TextField uploadVehiclesTextField;
-    @FXML
-    private TextField passwordTextField;
-    @FXML
     private Button loginButton;
-    @FXML
-    private Button uploadUsersButton;
     @FXML
     private TextField emailTextField;
     @FXML
@@ -51,7 +42,6 @@ public class LoginController {
 
     public void loadLoginScene(Stage primaryStage) {
         try {
-
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Login.fxml"));
             Parent root = loader.load();
 
@@ -73,21 +63,17 @@ public class LoginController {
         Optional<User> userOptional = userService.login(email, password);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-
             userService.setCurrentUser(user);
 
-            boolean isAdmin = user.isAdmin();
-            if (isAdmin) {
-                loadScene("/fxml/Administrator.fxml", "Administrator", isAdmin);
-            } else {
-                loadScene("/fxml/User.fxml", "User", isAdmin);
-            }
+            boolean isAdmin = "admin".equalsIgnoreCase(user.getAccountType());
+
+            loadScene(isAdmin ? "/fxml/Administrator.fxml" : "/fxml/User.fxml", isAdmin ? "Administrator" : "User");
         } else {
             statusLabel.setText("Invalid email or password.");
         }
     }
 
-    private void loadScene(String fxmlPath, String title, boolean isAdmin) {
+    private void loadScene(String fxmlPath, String title) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
@@ -114,48 +100,6 @@ public class LoginController {
         } catch (IOException e) {
             e.printStackTrace();
             statusLabel.setText("Error loading registration page.");
-        }
-    }
-
-    @FXML
-    private void handleUserFileUpload() {
-        String filePath = uploadUsersTextField.getText().trim();
-
-        if (filePath.isEmpty()) {
-            statusLabel.setText("Please enter a file path.");
-            return;
-        }
-
-        FileLoader fileLoader = new FileLoader(userService.getUserRepository(), VehicleRepository.getInstance());
-
-        try {
-            fileLoader.loadUsers(filePath);
-            statusLabel.setText("Users uploaded successfully.");
-        } catch (IOException e) {
-            statusLabel.setText("Error uploading users: " + e.getMessage());
-        } catch (Exception e) {
-            statusLabel.setText("Error: " + e.getMessage());
-        }
-    }
-
-    @FXML
-    private void handleVehicleFileUpload() {
-        String filePath = uploadVehiclesTextField.getText().trim();
-
-        if (filePath.isEmpty()) {
-            statusLabel.setText("Please enter a file path for vehicles.");
-            return;
-        }
-
-        FileLoader fileLoader = new FileLoader(userService.getUserRepository(), VehicleRepository.getInstance());
-
-        try {
-            fileLoader.loadVehicles(filePath);
-            statusLabel.setText("Vehicles uploaded successfully.");
-        } catch (IOException e) {
-            statusLabel.setText("Error uploading vehicles: " + e.getMessage());
-        } catch (Exception e) {
-            statusLabel.setText("Error: " + e.getMessage());
         }
     }
 }

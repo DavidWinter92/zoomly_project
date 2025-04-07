@@ -2,6 +2,7 @@ package com.zoomly.controllers;
 
 import com.zoomly.model.User;
 import com.zoomly.service.UserService;
+import com.zoomly.util.UserValidator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -58,7 +59,6 @@ public class UserAccountSettingsController extends BaseMenuController {
         reservationsButton.setOnAction(this::handleReservations);
         logoutButton.setOnAction(this::handleLogout);
 
-        // Set up update button actions
         updateEmailButton.setOnAction(this::handleUpdateEmail);
         updateFirstNameButton.setOnAction(this::handleUpdateFirstName);
         updateLastNameButton.setOnAction(this::handleUpdateLastName);
@@ -67,6 +67,11 @@ public class UserAccountSettingsController extends BaseMenuController {
 
     private void loadCurrentUserData() {
         User currentUser = userService.getCurrentUser();
+        if (currentUser != null) {
+            firstNameTextField.setText(currentUser.getFirstName());
+            lastNameTextField.setText(currentUser.getLastName());
+            emailTextField.setText(currentUser.getEmail());
+        }
     }
 
     @FXML
@@ -80,12 +85,13 @@ public class UserAccountSettingsController extends BaseMenuController {
         User currentUser = userService.getCurrentUser();
         if (currentUser != null) {
             try {
+                UserValidator.validate(new User(currentUser.getId(), currentUser.getFirstName(), currentUser.getLastName(), newEmail, currentUser.getPassword(), currentUser.getAccountType()));
                 userService.updateEmail(currentUser.getId(), newEmail);
-                errorTextField.setText("");
-                System.out.println("Email updated successfully.");
+                errorTextField.setText("Email changed to: " + newEmail);
                 loadCurrentUserData();
+            } catch (IllegalArgumentException e) {
+                errorTextField.setText(e.getMessage());
             } catch (Exception e) {
-                System.out.println("Caught an exception: " + e.getMessage());
                 errorTextField.setText("Error updating email: " + e.getMessage());
             }
         } else {
@@ -99,10 +105,12 @@ public class UserAccountSettingsController extends BaseMenuController {
         User currentUser = userService.getCurrentUser();
         if (currentUser != null) {
             try {
+                UserValidator.validate(new User(currentUser.getId(), newFirstName, currentUser.getLastName(), currentUser.getEmail(), currentUser.getPassword(), currentUser.getAccountType()));
                 userService.updateFirstName(currentUser.getId(), newFirstName);
-                errorTextField.setText("");
-                System.out.println("First name updated successfully.");
+                errorTextField.setText("First name changed to: " + newFirstName);
                 loadCurrentUserData();
+            } catch (IllegalArgumentException e) {
+                errorTextField.setText(e.getMessage());
             } catch (Exception e) {
                 errorTextField.setText("Error updating first name: " + e.getMessage());
             }
@@ -117,10 +125,12 @@ public class UserAccountSettingsController extends BaseMenuController {
         User currentUser = userService.getCurrentUser();
         if (currentUser != null) {
             try {
+                UserValidator.validate(new User(currentUser.getId(), currentUser.getFirstName(), newLastName, currentUser.getEmail(), currentUser.getPassword(), currentUser.getAccountType()));
                 userService.updateLastName(currentUser.getId(), newLastName);
-                errorTextField.setText("");
-                System.out.println("Last name updated successfully.");
+                errorTextField.setText("Last name changed to: " + newLastName);
                 loadCurrentUserData();
+            } catch (IllegalArgumentException e) {
+                errorTextField.setText(e.getMessage());
             } catch (Exception e) {
                 errorTextField.setText("Error updating last name: " + e.getMessage());
             }
@@ -135,10 +145,12 @@ public class UserAccountSettingsController extends BaseMenuController {
         User currentUser = userService.getCurrentUser();
         if (currentUser != null) {
             try {
+                UserValidator.validate(new User(currentUser.getId(), currentUser.getFirstName(), currentUser.getLastName(), currentUser.getEmail(), newPassword, currentUser.getAccountType()));
                 userService.updatePassword(currentUser.getId(), newPassword);
-                errorTextField.setText("");
-                System.out.println("Password updated successfully.");
+                errorTextField.setText("Password updated successfully.");
                 loadCurrentUserData();
+            } catch (IllegalArgumentException e) {
+                errorTextField.setText(e.getMessage());
             } catch (Exception e) {
                 errorTextField.setText("Error updating password: " + e.getMessage());
             }

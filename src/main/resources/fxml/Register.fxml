@@ -62,7 +62,7 @@
                </font>
             </Label>
             <TextField fx:id="emailTextField" layoutX="194.0" layoutY="260.0" promptText="Email" text="user1@gmail.com" />
-            <Label fx:id="statusLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="83.0" layoutY="492.0" prefHeight="17.0" prefWidth="296.0" textFill="#ff2727" /> <!-- Added status label -->
+            <Label fx:id="statusLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="22.0" layoutY="492.0" prefHeight="17.0" prefWidth="405.0" textFill="#ff2727" /> <!-- Added status label -->
             <Button fx:id="signInButton" layoutX="125.0" layoutY="448.0" mnemonicParsing="false" onAction="#handleSignIn" prefHeight="30.0" prefWidth="70.0" style="-fx-background-color: #101010;" text="Sign In" textFill="#6fbf4e">
                <font>
                   <Font size="14.0" />

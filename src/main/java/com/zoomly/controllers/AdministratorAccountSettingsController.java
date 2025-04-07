@@ -2,10 +2,11 @@ package com.zoomly.controllers;
 
 import com.zoomly.model.User;
 import com.zoomly.service.UserService;
+import com.zoomly.util.UserValidator;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.event.ActionEvent;
 
 /**
  * AdministratorAccountSettingsController.java
@@ -51,7 +52,7 @@ public class AdministratorAccountSettingsController extends BaseMenuController {
 
     @FXML
     private void initialize() {
-        loadCurrentUserData();
+        refreshData(); // Load user data when initializing
         manageUsersButton.setOnAction(this::handleManageUsers);
         manageVehiclesButton.setOnAction(this::handleManageVehicles);
         manageReservationsButton.setOnAction(this::handleManageReservations);
@@ -63,7 +64,8 @@ public class AdministratorAccountSettingsController extends BaseMenuController {
         updatePasswordButton.setOnAction(this::handleUpdatePassword);
     }
 
-    private void loadCurrentUserData() {
+    @Override
+    protected void refreshData() {
         User currentUser = userService.getCurrentUser();
         if (currentUser != null) {
             firstNameTextField.setText(currentUser.getFirstName());
@@ -78,10 +80,14 @@ public class AdministratorAccountSettingsController extends BaseMenuController {
         User currentUser = userService.getCurrentUser();
         if (currentUser != null) {
             try {
+                UserValidator.validate(new User(currentUser.getId(), currentUser.getFirstName(), currentUser.getLastName(), newEmail, currentUser.getPassword(), currentUser.getAccountType()));
                 userService.updateEmail(currentUser.getId(), newEmail);
                 errorTextField.setText("");
-                System.out.println("Email updated successfully.");
-                loadCurrentUserData();
+                System.out.println("Email updated successfully to: " + newEmail);
+                errorTextField.setText("Email changed to: " + newEmail);
+                refreshData();
+            } catch (IllegalArgumentException e) {
+                errorTextField.setText(e.getMessage());
             } catch (Exception e) {
                 System.out.println("Caught an exception: " + e.getMessage());
                 errorTextField.setText("Error updating email: " + e.getMessage());
@@ -97,10 +103,15 @@ public class AdministratorAccountSettingsController extends BaseMenuController {
         User currentUser = userService.getCurrentUser();
         if (currentUser != null) {
             try {
+                UserValidator.validate(new User(currentUser.getId(), newFirstName, currentUser.getLastName(), currentUser.getEmail(), currentUser.getPassword(), currentUser.getAccountType()));
                 userService.updateFirstName(currentUser.getId(), newFirstName);
                 errorTextField.setText("");
-                System.out.println("First name updated successfully.");
-                loadCurrentUserData();
+                System.out.println("First name updated successfully to: " + newFirstName);
+                // Success feedback
+                errorTextField.setText("First name changed to: " + newFirstName);
+                refreshData();
+            } catch (IllegalArgumentException e) {
+                errorTextField.setText(e.getMessage());
             } catch (Exception e) {
                 System.out.println("Caught an exception: " + e.getMessage());
                 errorTextField.setText("Error updating first name: " + e.getMessage());
@@ -116,10 +127,14 @@ public class AdministratorAccountSettingsController extends BaseMenuController {
         User currentUser = userService.getCurrentUser();
         if (currentUser != null) {
             try {
+                UserValidator.validate(new User(currentUser.getId(), currentUser.getFirstName(), newLastName, currentUser.getEmail(), currentUser.getPassword(), currentUser.getAccountType()));
                 userService.updateLastName(currentUser.getId(), newLastName);
                 errorTextField.setText("");
-                System.out.println("Last name updated successfully.");
-                loadCurrentUserData();
+                System.out.println("Last name updated successfully to: " + newLastName);
+                errorTextField.setText("Last name changed to: " + newLastName);
+                refreshData();
+            } catch (IllegalArgumentException e) {
+                errorTextField.setText(e.getMessage());
             } catch (Exception e) {
                 System.out.println("Caught an exception: " + e.getMessage());
                 errorTextField.setText("Error updating last name: " + e.getMessage());
@@ -135,10 +150,14 @@ public class AdministratorAccountSettingsController extends BaseMenuController {
         User currentUser = userService.getCurrentUser();
         if (currentUser != null) {
             try {
+                UserValidator.validate(new User(currentUser.getId(), currentUser.getFirstName(), currentUser.getLastName(), currentUser.getEmail(), newPassword, currentUser.getAccountType()));
                 userService.updatePassword(currentUser.getId(), newPassword);
                 errorTextField.setText("");
                 System.out.println("Password updated successfully.");
-                loadCurrentUserData();
+                errorTextField.setText("Password updated successfully.");
+                refreshData();
+            } catch (IllegalArgumentException e) {
+                errorTextField.setText(e.getMessage());
             } catch (Exception e) {
                 System.out.println("Caught an exception: " + e.getMessage());
                 errorTextField.setText("Error updating password: " + e.getMessage());

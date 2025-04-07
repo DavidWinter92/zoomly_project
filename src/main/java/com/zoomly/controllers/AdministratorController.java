@@ -41,7 +41,7 @@ public class AdministratorController extends BaseMenuController {
 
     @FXML
     private void initialize() {
-        loadCurrentUserData();
+        refreshData();
         manageUsersButton.setOnAction(this::handleManageUsers);
         manageVehiclesButton.setOnAction(this::handleManageVehicles);
         manageReservationsButton.setOnAction(this::handleManageReservations);
@@ -49,7 +49,8 @@ public class AdministratorController extends BaseMenuController {
         logoutButton.setOnAction(this::handleLogout);
     }
 
-    private void loadCurrentUserData() {
+    @Override
+    protected void refreshData() {
         User currentUser = userService.getCurrentUser();
         if (currentUser != null) {
             firstNameTextField.setText(currentUser.getFirstName());

@@ -2,7 +2,7 @@ package com.zoomly.controllers;
 
 import com.zoomly.model.User;
 import com.zoomly.service.UserService;
-import com.zoomly.util.Validator;
+import com.zoomly.util.UserValidator;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -47,7 +47,6 @@ public class RegisterController {
         String lastName = lastNameTextField.getText();
         String email = emailTextField.getText();
         String password = passwordPasswordField.getText();
-
         String accountType = "user";
 
         if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
@@ -55,15 +54,21 @@ public class RegisterController {
             return;
         }
 
-        if (!Validator.isValidEmail(email)) {
-            statusLabel.setText("Invalid email format.");
-            return;
-        }
-
         try {
-            User newUser = userService.registerUser(firstName, lastName, email, password, accountType);
+            if (userService.isEmailRegistered(email)) {
+                statusLabel.setText("Error: Email is already registered.");
+                return;
+            }
+
+            User newUser = new User(0, firstName, lastName, email, password, accountType);
+
+            UserValidator.validate(newUser);
+
+            userService.registerUser(firstName, lastName, email, password, accountType);
             statusLabel.setText("Registration successful!");
             clearFields();
+        } catch (IllegalArgumentException e) {
+            statusLabel.setText(e.getMessage());
         } catch (Exception e) {
             statusLabel.setText("Error registering user: " + e.getMessage());
         }
