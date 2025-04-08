@@ -18,7 +18,6 @@ import javafx.stage.Stage;
  * Controller class for handling user registration.
  * Provides functionalities to register a new user and navigate to the login screen.
  */
-
 public class RegisterController {
     @FXML
     private TextField lastNameTextField;
@@ -37,10 +36,19 @@ public class RegisterController {
 
     private UserService userService;
 
+    /**
+     * Initializes the RegisterController by setting up the UserService instance.
+     */
     public RegisterController() {
         this.userService = UserService.getInstance();
     }
 
+    /**
+     * Handles the user registration process.
+     * Validates the input fields, checks if the email is already registered,
+     * and registers a new user if all checks pass.
+     * Displays appropriate status messages based on the registration outcome.
+     */
     @FXML
     public void handleRegister() {
         String firstName = firstNameTextField.getText();
@@ -74,6 +82,9 @@ public class RegisterController {
         }
     }
 
+    /**
+     * Clears all input fields in the registration form.
+     */
     private void clearFields() {
         lastNameTextField.clear();
         firstNameTextField.clear();
@@ -81,6 +92,10 @@ public class RegisterController {
         passwordPasswordField.clear();
     }
 
+    /**
+     * Handles the action for navigating to the login screen.
+     * Loads the login FXML file and sets the scene to the login screen.
+     */
     @FXML
     public void handleSignIn() {
         try {

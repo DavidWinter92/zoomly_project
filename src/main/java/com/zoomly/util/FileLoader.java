@@ -11,22 +11,30 @@ import java.io.IOException;
 /**
  * FileLoader.java
  * This class handles loading and validating data from text files for users and vehicles.
+ * It provides methods for loading user and vehicle data from specified text files.
  */
-
 public class FileLoader {
     private final UserDao userDao;
     private final VehicleDao vehicleDao;
 
+    /**
+     * Constructor for initializing FileLoader with UserDao and VehicleDao instances.
+     *
+     * @param userDao The UserDao instance used to manage users.
+     * @param vehicleDao The VehicleDao instance used to manage vehicles.
+     */
     public FileLoader(UserDao userDao, VehicleDao vehicleDao) {
         this.userDao = userDao;
         this.vehicleDao = vehicleDao;
     }
 
     /**
-     * method: loadUsers
-     * parameters: String filePath - Path to the users text file
-     * return: void
-     * purpose: Loads and validates user data from a text file.
+     * Loads and validates user data from a text file.
+     * Each line in the file should contain comma-separated values representing the user's first name,
+     * last name, email, password, and account type.
+     *
+     * @param filePath The path to the users text file.
+     * @throws IOException If an I/O error occurs while reading the file.
      */
     public void loadUsers(String filePath) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(filePath));
@@ -59,10 +67,12 @@ public class FileLoader {
     }
 
     /**
-     * method: loadVehicles
-     * parameters: String filePath - Path to the vehicles text file
-     * return: void
-     * purpose: Loads and validates vehicle data from a text file.
+     * Loads and validates vehicle data from a text file.
+     * Each line in the file should contain comma-separated values representing the vehicle's VIN,
+     * make, model, year, mileage, price per day, image path, and description.
+     *
+     * @param filePath The path to the vehicles text file.
+     * @throws IOException If an I/O error occurs while reading the file.
      */
     public void loadVehicles(String filePath) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(filePath));

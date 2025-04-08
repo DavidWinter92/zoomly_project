@@ -13,8 +13,8 @@ import javafx.scene.control.TextField;
  * Controller class for managing user account settings.
  * Provides functionalities to update user details and navigate to different user-related views.
  */
-
 public class UserAccountSettingsController extends BaseMenuController {
+
     @FXML
     private Button editAccountButton;
     @FXML
@@ -46,10 +46,17 @@ public class UserAccountSettingsController extends BaseMenuController {
 
     private UserService userService;
 
+    /**
+     * Initializes the UserAccountSettingsController.
+     * Sets up the UserService instance.
+     */
     public UserAccountSettingsController() {
         this.userService = UserService.getInstance();
     }
 
+    /**
+     * Initializes the controller by setting up event handlers for buttons and loading the current user data.
+     */
     @FXML
     private void initialize() {
         loadCurrentUserData();
@@ -65,6 +72,9 @@ public class UserAccountSettingsController extends BaseMenuController {
         updatePasswordButton.setOnAction(this::handleUpdatePassword);
     }
 
+    /**
+     * Loads the current user data and populates the text fields.
+     */
     private void loadCurrentUserData() {
         User currentUser = userService.getCurrentUser();
         if (currentUser != null) {
@@ -74,11 +84,22 @@ public class UserAccountSettingsController extends BaseMenuController {
         }
     }
 
+    /**
+     * Handles the action for navigating to the Edit Account scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleEditAccount(ActionEvent event) {
         loadScene("/fxml/EditAccount.fxml", "Edit Account", event);
     }
 
+    /**
+     * Handles the action for updating the user's email.
+     * Validates the new email, updates it, and refreshes the user data.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleUpdateEmail(ActionEvent event) {
         String newEmail = emailTextField.getText();
@@ -99,6 +120,12 @@ public class UserAccountSettingsController extends BaseMenuController {
         }
     }
 
+    /**
+     * Handles the action for updating the user's first name.
+     * Validates the new first name, updates it, and refreshes the user data.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleUpdateFirstName(ActionEvent event) {
         String newFirstName = firstNameTextField.getText();
@@ -119,6 +146,12 @@ public class UserAccountSettingsController extends BaseMenuController {
         }
     }
 
+    /**
+     * Handles the action for updating the user's last name.
+     * Validates the new last name, updates it, and refreshes the user data.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleUpdateLastName(ActionEvent event) {
         String newLastName = lastNameTextField.getText();
@@ -139,6 +172,12 @@ public class UserAccountSettingsController extends BaseMenuController {
         }
     }
 
+    /**
+     * Handles the action for updating the user's password.
+     * Validates the new password, updates it, and refreshes the user data.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleUpdatePassword(ActionEvent event) {
         String newPassword = passwordTextField.getText();
@@ -159,21 +198,41 @@ public class UserAccountSettingsController extends BaseMenuController {
         }
     }
 
+    /**
+     * Handles the action for navigating to the Browse Vehicles scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleBrowsVehicle(ActionEvent event) {
         loadScene("/fxml/BrowsVehicles.fxml", "Browse Vehicles", event);
     }
 
+    /**
+     * Handles the action for navigating to the User Profile scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleUserProfile(ActionEvent event) {
         loadScene("/fxml/User.fxml", "User Profile", event);
     }
 
+    /**
+     * Handles the action for navigating to the Reservations scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleReservations(ActionEvent event) {
         loadScene("/fxml/Reservations.fxml", "Reservations", event);
     }
 
+    /**
+     * Handles the action for logging out and navigating to the Login scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleLogout(ActionEvent event) {
         loadScene("/fxml/Login.fxml", "Login", event);

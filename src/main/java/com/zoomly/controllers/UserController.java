@@ -12,10 +12,10 @@ import javafx.event.ActionEvent;
  * Controller class for managing user profile information and navigation.
  * Provides functionalities to view user details and navigate to other scenes.
  */
-
 public class UserController extends BaseMenuController {
+
     @FXML
-    private Button browsVehicleButton;
+    private Button browseVehicleButton;
     @FXML
     private Button reservationsButton;
     @FXML
@@ -31,24 +31,28 @@ public class UserController extends BaseMenuController {
 
     private UserService userService;
 
+    /**
+     * Initializes the UserController by setting up the UserService instance.
+     */
     public UserController() {
         this.userService = UserService.getInstance();
     }
 
+    /**
+     * Initializes the controller by setting up event handlers for buttons and refreshing user data.
+     */
     @FXML
     private void initialize() {
         refreshData();
-        browsVehicleButton.setOnAction(this::handleBrowsVehicle);
-        reservationsButton.setOnAction(this::handleReservations);
+        browseVehicleButton.setOnAction(this::handleBrowseVehicles);
+        reservationsButton.setOnAction(this::handleManageReservations);
         editAccountButton.setOnAction(this::handleEditAccount);
         logoutButton.setOnAction(this::handleLogout);
     }
 
     /**
-     * method: loadCurrentUserData
-     * parameters: void
-     * return: void
-     * purpose: Loads the current user data and populates the text fields.
+     * Loads the current user data and populates the text fields.
+     * If no user is logged in, it outputs a message or could navigate to the login scene.
      */
     @Override
     protected void refreshData() {
@@ -62,21 +66,41 @@ public class UserController extends BaseMenuController {
         }
     }
 
+    /**
+     * Handles the action for navigating to the Browse Vehicles scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
-    private void handleBrowsVehicle(ActionEvent event) {
+    private void handleBrowseVehicles(ActionEvent event) {
         loadScene("/fxml/BrowsVehicles.fxml", "Browse Vehicles", event);
     }
 
+    /**
+     * Handles the action for navigating to the Reservations scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
-    private void handleReservations(ActionEvent event) {
+    private void handleManageReservations(ActionEvent event) {
         loadScene("/fxml/Reservations.fxml", "Reservations", event);
     }
 
+    /**
+     * Handles the action for navigating to the Edit Account scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleEditAccount(ActionEvent event) {
         loadScene("/fxml/EditAccountUser.fxml", "Edit Account", event);
     }
 
+    /**
+     * Handles the action for logging out and navigating to the Login scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleLogout(ActionEvent event) {
         loadScene("/fxml/Login.fxml", "Login", event);

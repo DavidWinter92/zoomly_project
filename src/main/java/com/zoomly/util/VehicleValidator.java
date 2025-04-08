@@ -10,14 +10,26 @@ import java.util.List;
  * Provides methods to validate VIN, make, model, year, mileage, and price per day.
  * Ensures that vehicle data meets the required format and standards before adding it to the system.
  */
-
 public class VehicleValidator {
+
     private static final List<String> VALID_MAKES = Arrays.asList("Toyota", "Honda", "Tesla", "Ford");
     private static final List<String> TOYOTA_MODELS = Arrays.asList("Corolla", "Camry");
     private static final List<String> HONDA_MODELS = Arrays.asList("Civic", "Accord");
     private static final List<String> TESLA_MODELS = Arrays.asList("Model X", "Model Y", "Model S");
     private static final List<String> FORD_MODELS = Arrays.asList("Mustang", "F-150");
 
+    /**
+     * Validates the details of a vehicle.
+     * Checks if the VIN, make, model, year, mileage, and price per day are valid.
+     *
+     * @param vin The Vehicle Identification Number (VIN) to validate.
+     * @param make The make of the vehicle to validate.
+     * @param model The model of the vehicle to validate.
+     * @param year The year of the vehicle to validate.
+     * @param mileage The mileage of the vehicle to validate.
+     * @param pricePerDay The price per day for renting the vehicle to validate.
+     * @throws IllegalArgumentException If any of the vehicle attributes are invalid.
+     */
     public static void validate(String vin, String make, String model, int year, double mileage, double pricePerDay) {
         // Validate VIN
         if (vin.length() != 8 || !vin.matches("[A-Za-z0-9]+")) {
@@ -49,6 +61,13 @@ public class VehicleValidator {
         }
     }
 
+    /**
+     * Validates if the model is valid for the given make.
+     *
+     * @param make The make of the vehicle.
+     * @param model The model of the vehicle.
+     * @return true if the model is valid for the make, false otherwise.
+     */
     private static boolean isValidModel(String make, String model) {
         switch (make) {
             case "Toyota":
@@ -64,6 +83,12 @@ public class VehicleValidator {
         }
     }
 
+    /**
+     * Returns a string containing valid models for the given make.
+     *
+     * @param make The make of the vehicle.
+     * @return A string containing the valid models for the given make.
+     */
     private static String getValidModels(String make) {
         switch (make) {
             case "Toyota":
@@ -79,6 +104,12 @@ public class VehicleValidator {
         }
     }
 
+    /**
+     * Validates the mileage of the vehicle.
+     *
+     * @param mileage The mileage of the vehicle to validate.
+     * @throws IllegalArgumentException If the mileage is negative.
+     */
     private static void validateMileage(double mileage) {
         if (mileage < 0) {
             throw new IllegalArgumentException("Mileage must be a positive number.");

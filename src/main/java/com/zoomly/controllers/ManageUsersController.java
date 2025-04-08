@@ -24,69 +24,56 @@ import java.util.List;
  * Controller class for managing user operations in the application.
  * Provides functionalities to add, update, delete, and list users.
  */
-
 public class ManageUsersController extends BaseMenuController {
 
-    @FXML
-    private Button logoutButton;
-    @FXML
-    private Button manageVehiclesButton;
-    @FXML
-    private Button manageReservationsButton;
-    @FXML
-    private Button editAccountButton;
-    @FXML
-    private Button adminMenuButton;
-    @FXML
-    private Button addUserButton;
-    @FXML
-    private Button uploadFileButton;
-    @FXML
-    private Button deleteButton;
+    @FXML private Button logoutButton;
+    @FXML private Button manageVehiclesButton;
+    @FXML private Button manageReservationsButton;
+    @FXML private Button editAccountButton;
+    @FXML private Button adminMenuButton;
+    @FXML private Button addUserButton;
+    @FXML private Button uploadFileButton;
+    @FXML private Button deleteButton;
 
-    @FXML
-    private TextField firstNameTextField;
-    @FXML
-    private TextField lastNameTextField;
-    @FXML
-    private TextField emailTextField;
-    @FXML
-    private TextField passwordTextField;
-    @FXML
-    private TextField accountTypeTextField;
-    @FXML
-    private TextField uploadUsersTextField;
-    @FXML
-    private TableView<User> usersTableView;
+    @FXML private TextField firstNameTextField;
+    @FXML private TextField lastNameTextField;
+    @FXML private TextField emailTextField;
+    @FXML private TextField passwordTextField;
+    @FXML private TextField accountTypeTextField;
+    @FXML private TextField uploadUsersTextField;
+    @FXML private TableView<User> usersTableView;
 
-    @FXML
-    private TableColumn<User, Integer> idColumn;
-    @FXML
-    private TableColumn<User, String> firstNameColumn;
-    @FXML
-    private TableColumn<User, String> lastNameColumn;
-    @FXML
-    private TableColumn<User, String> emailColumn;
-    @FXML
-    private TableColumn<User, String> passwordColumn;
-    @FXML
-    private TableColumn<User, String> accountTypeColumn;
-    @FXML
-    private TextField errorTextField;
+    @FXML private TableColumn<User, Integer> idColumn;
+    @FXML private TableColumn<User, String> firstNameColumn;
+    @FXML private TableColumn<User, String> lastNameColumn;
+    @FXML private TableColumn<User, String> emailColumn;
+    @FXML private TableColumn<User, String> passwordColumn;
+    @FXML private TableColumn<User, String> accountTypeColumn;
+    @FXML private TextField errorTextField;
 
     private UserService userService;
     private ObservableList<User> userList;
 
+    /**
+     * Default constructor for the ManageUsersController.
+     * Initializes the UserService instance.
+     */
     public ManageUsersController() {
         this.userService = UserService.getInstance();
     }
 
+    /**
+     * Initializes the controller class. Sets up the table view and loads users into the table.
+     */
     @FXML
     private void initialize() {
         setupTableView();
         loadUsersIntoTable();
     }
 
+    /**
+     * Sets up the table view with column bindings and enables editing for user properties.
+     */
     private void setupTableView() {
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         firstNameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
@@ -186,17 +173,25 @@ public class ManageUsersController extends BaseMenuController {
             }
         });
 
-
         userList = FXCollections.observableArrayList();
         usersTableView.setItems(userList);
         usersTableView.setEditable(true);
     }
 
+    /**
+     * Loads the list of users into the table view.
+     */
     private void loadUsersIntoTable() {
         List<User> users = userService.getAllUsers();
         userList.setAll(users);
     }
 
+    /**
+     * Handles the event to add a new user.
+     * Validates user input and adds the user to the database.
+     *
+     * @param event the action event triggered when the add user button is clicked.
+     */
     @FXML
     private void handleAddUser(ActionEvent event) {
         try {
@@ -222,6 +217,12 @@ public class ManageUsersController extends BaseMenuController {
         }
     }
 
+    /**
+     * Handles the event to delete a selected user.
+     * Removes the user from the database.
+     *
+     * @param event the action event triggered when the delete user button is clicked.
+     */
     @FXML
     private void handleDeleteUser(ActionEvent event) {
         User selectedUser = usersTableView.getSelectionModel().getSelectedItem();
@@ -239,6 +240,12 @@ public class ManageUsersController extends BaseMenuController {
         }
     }
 
+    /**
+     * Handles the event to upload a file containing user data.
+     * Loads users from the uploaded file and updates the table.
+     *
+     * @param event the action event triggered when the upload file button is clicked.
+     */
     @FXML
     private void handleUserFileUpload(ActionEvent event) {
         String filePath = uploadUsersTextField.getText();
@@ -262,28 +269,54 @@ public class ManageUsersController extends BaseMenuController {
         errorTextField.setText(output);
     }
 
+    /**
+     * Handles the action for navigating to the Manage Vehicles screen.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleManageVehicles(ActionEvent event) {
         loadScene("/fxml/ManageVehicles.fxml", "Manage Vehicles", event);
     }
 
+    /**
+     * Handles the action for navigating to the Manage Reservations scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleManageReservations(ActionEvent event) {
         loadScene("/fxml/ManageReservations.fxml", "Manage Reservations", event);
     }
 
+    /**
+     * Handles the action for navigating to the Edit Account Admin scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleEditAccount(ActionEvent event) {
         loadScene("/fxml/EditAccountAdmin.fxml", "Edit Account", event);
     }
 
+    /**
+     * Handles the action for navigating to the Admin Menu scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleAdminMenu(ActionEvent event) {
         loadScene("/fxml/Administrator.fxml", "Admin Menu", event);
     }
 
+    /**
+     * Handles the action for logging out and navigating to the Login scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleLogout(ActionEvent event) {
         loadScene("/fxml/Login.fxml", "Login", event);
     }
+
 }

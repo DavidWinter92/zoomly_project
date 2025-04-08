@@ -16,10 +16,9 @@ import java.util.List;
 
 /**
  * ManageVehiclesController.java
- * Controller class for managing vehicles in the application.
- * Handles adding, deleting, updating vehicle details, uploading vehicle files, and scene transitions.
+ * Controller class responsible for managing vehicle-related actions in the application.
+ * Handles adding, deleting, updating vehicle details, uploading vehicle files, and navigating between scenes.
  */
-
 public class ManageVehiclesController extends BaseMenuController {
 
     @FXML
@@ -74,16 +73,25 @@ public class ManageVehiclesController extends BaseMenuController {
 
     private VehicleService vehicleService;
 
+    /**
+     * Constructor for ManageVehiclesController. Initializes the VehicleService.
+     */
     public ManageVehiclesController() {
         this.vehicleService = VehicleService.getInstance();
     }
 
+    /**
+     * Initializes the controller. Sets up the TableView and loads vehicles into the table.
+     */
     @FXML
     private void initialize() {
         setupTableView();
         loadVehicles();
     }
 
+    /**
+     * Configures the TableView by setting the cell factories and event listeners for cell edits.
+     */
     private void setupTableView() {
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         makeColumn.setCellValueFactory(new PropertyValueFactory<>("make"));
@@ -121,6 +129,12 @@ public class ManageVehiclesController extends BaseMenuController {
         });
     }
 
+    /**
+     * Updates the specified vehicle field when an edit is committed in the table.
+     *
+     * @param event The edit event.
+     * @param fieldName The field name being updated.
+     */
     private void updateVehicleField(TableColumn.CellEditEvent<Vehicle, ?> event, String fieldName) {
         Vehicle selectedVehicle = event.getRowValue();
         String originalValue = event.getOldValue().toString();
@@ -170,6 +184,12 @@ public class ManageVehiclesController extends BaseMenuController {
         }
     }
 
+    /**
+     * Reverts the vehicle field to its original value in case of an error during update.
+     *
+     * @param event The edit event.
+     * @param originalValue The original value of the field.
+     */
     private void revertVehicleField(TableColumn.CellEditEvent<Vehicle, ?> event, String originalValue) {
         Vehicle selectedVehicle = event.getRowValue();
 
@@ -207,12 +227,20 @@ public class ManageVehiclesController extends BaseMenuController {
         event.consume();
     }
 
+    /**
+     * Loads the list of vehicles from the vehicle service and updates the TableView.
+     */
     private void loadVehicles() {
         List<Vehicle> vehicles = vehicleService.getAllVehicles();
         vehiclesTableView.getItems().clear();
         vehiclesTableView.getItems().addAll(vehicles);
     }
 
+    /**
+     * Handles the event of adding a new vehicle.
+     *
+     * @param event The action event triggered when the add button is clicked.
+     */
     @FXML
     private void handleAddVehicle(ActionEvent event) {
         String vin = vinTextField.getText();
@@ -235,6 +263,11 @@ public class ManageVehiclesController extends BaseMenuController {
         }
     }
 
+    /**
+     * Handles the event of deleting a selected vehicle.
+     *
+     * @param event The action event triggered when the delete button is clicked.
+     */
     @FXML
     private void handleDeleteVehicle(ActionEvent event) {
         Vehicle selectedVehicle = vehiclesTableView.getSelectionModel().getSelectedItem();
@@ -248,6 +281,11 @@ public class ManageVehiclesController extends BaseMenuController {
         }
     }
 
+    /**
+     * Handles the event of uploading vehicle data from a file.
+     *
+     * @param event The action event triggered when the upload button is clicked.
+     */
     @FXML
     private void handleVehicleFileUpload(ActionEvent event) {
         String filePath = uploadVehiclesTextField.getText();
@@ -262,26 +300,51 @@ public class ManageVehiclesController extends BaseMenuController {
         }
     }
 
+    /**
+     * Handles the action for navigating to the Manage Users scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleManageUsers(ActionEvent event) {
         loadScene("/fxml/ManageUsers.fxml", "Manage Users", event);
     }
 
+    /**
+     * Handles the action for navigating to the Manage Reservations scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleManageReservations(ActionEvent event) {
         loadScene("/fxml/ManageReservations.fxml", "Manage Reservations", event);
     }
 
+    /**
+     * Handles the action for navigating to the Edit Account Admin scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleEditAccount(ActionEvent event) {
         loadScene("/fxml/EditAccountAdmin.fxml", "Edit Account", event);
     }
 
+    /**
+     * Handles the action for navigating to the Admin Menu scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleAdminMenu(ActionEvent event) {
         loadScene("/fxml/Administrator.fxml", "Admin Menu", event);
     }
 
+    /**
+     * Handles the action for logging out and navigating to the Login scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleLogout(ActionEvent event) {
         loadScene("/fxml/Login.fxml", "Login", event);

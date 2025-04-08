@@ -24,13 +24,7 @@ import java.util.regex.Pattern;
  * Controller for setting up and connecting to the database server.
  * Handles user input for database server address, username, password,
  * and uploads the database schema from a file.
- *
- * This class interacts with the DatabaseConnection utility to establish a
- * connection and handle any SQL script executions required for database setup.
- * It also includes functionality for switching the scene to the login screen
- * once the database setup is successful.
  */
-
 public class ServerSetupController {
 
     @FXML
@@ -56,12 +50,22 @@ public class ServerSetupController {
 
     private Connection connection;
 
+    /**
+     * Initializes the controller by disabling the file upload controls
+     * until the connection to the database is successful.
+     */
     @FXML
     public void initialize() {
         filepathTextField.setDisable(true);
         uploadButton.setDisable(true);
     }
 
+    /**
+     * Handles the connection to the database server based on user input.
+     * Sets the connection details and attempts to establish a connection.
+     *
+     * @throws SQLException If a database connection error occurs.
+     */
     @FXML
     private void handleConnect() {
         String serverAddress = serverAddressTextField.getText();
@@ -83,6 +87,13 @@ public class ServerSetupController {
         }
     }
 
+    /**
+     * Handles the upload of the SQL script to create and populate the database.
+     * Executes the script and handles any errors during execution.
+     *
+     * @throws IOException If an error occurs while reading the script file.
+     * @throws SQLException If an error occurs while executing the SQL statements.
+     */
     @FXML
     private void handleUpload() {
         if (connection != null) {
@@ -127,6 +138,12 @@ public class ServerSetupController {
         }
     }
 
+    /**
+     * Extracts the database name from the SQL script.
+     *
+     * @param script The SQL script to extract the database name from.
+     * @return The extracted database name, or null if no database name is found.
+     */
     private String extractDatabaseName(String script) {
         Pattern pattern = Pattern.compile("USE `([^`]+)`;", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(script);
@@ -137,6 +154,11 @@ public class ServerSetupController {
         return null;
     }
 
+    /**
+     * Switches the scene to the login screen after the database setup is complete.
+     *
+     * @throws IOException If an error occurs while loading the login scene.
+     */
     private void switchToLogin() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Login.fxml"));

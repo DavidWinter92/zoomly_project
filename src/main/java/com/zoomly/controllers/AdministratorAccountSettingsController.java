@@ -13,7 +13,6 @@ import javafx.scene.control.TextField;
  * Controller class for managing administrator account settings.
  * Handles user interface interactions for updating user details.
  */
-
 public class AdministratorAccountSettingsController extends BaseMenuController {
     @FXML
     private Button logoutButton;
@@ -46,13 +45,21 @@ public class AdministratorAccountSettingsController extends BaseMenuController {
 
     private UserService userService;
 
+    /**
+     * Constructor for initializing the AdministratorAccountSettingsController.
+     * Initializes the UserService instance.
+     */
     public AdministratorAccountSettingsController() {
         this.userService = UserService.getInstance();
     }
 
+    /**
+     * Initializes the controller by setting up the button actions
+     * and refreshing the administrator's account data.
+     */
     @FXML
     private void initialize() {
-        refreshData(); // Load user data when initializing
+        refreshData();
         manageUsersButton.setOnAction(this::handleManageUsers);
         manageVehiclesButton.setOnAction(this::handleManageVehicles);
         manageReservationsButton.setOnAction(this::handleManageReservations);
@@ -64,6 +71,9 @@ public class AdministratorAccountSettingsController extends BaseMenuController {
         updatePasswordButton.setOnAction(this::handleUpdatePassword);
     }
 
+    /**
+     * Refreshes the administrator's account data by loading the current user details.
+     */
     @Override
     protected void refreshData() {
         User currentUser = userService.getCurrentUser();
@@ -74,6 +84,12 @@ public class AdministratorAccountSettingsController extends BaseMenuController {
         }
     }
 
+    /**
+     * Handles the action of updating the email address of the administrator.
+     * Validates the new email and updates it if valid.
+     *
+     * @param event The action event that triggered this method.
+     */
     @FXML
     private void handleUpdateEmail(ActionEvent event) {
         String newEmail = emailTextField.getText();
@@ -97,6 +113,12 @@ public class AdministratorAccountSettingsController extends BaseMenuController {
         }
     }
 
+    /**
+     * Handles the action of updating the first name of the administrator.
+     * Validates the new first name and updates it if valid.
+     *
+     * @param event The action event that triggered this method.
+     */
     @FXML
     private void handleUpdateFirstName(ActionEvent event) {
         String newFirstName = firstNameTextField.getText();
@@ -107,7 +129,6 @@ public class AdministratorAccountSettingsController extends BaseMenuController {
                 userService.updateFirstName(currentUser.getId(), newFirstName);
                 errorTextField.setText("");
                 System.out.println("First name updated successfully to: " + newFirstName);
-                // Success feedback
                 errorTextField.setText("First name changed to: " + newFirstName);
                 refreshData();
             } catch (IllegalArgumentException e) {
@@ -121,6 +142,12 @@ public class AdministratorAccountSettingsController extends BaseMenuController {
         }
     }
 
+    /**
+     * Handles the action of updating the last name of the administrator.
+     * Validates the new last name and updates it if valid.
+     *
+     * @param event The action event that triggered this method.
+     */
     @FXML
     private void handleUpdateLastName(ActionEvent event) {
         String newLastName = lastNameTextField.getText();
@@ -144,6 +171,12 @@ public class AdministratorAccountSettingsController extends BaseMenuController {
         }
     }
 
+    /**
+     * Handles the action of updating the password of the administrator.
+     * Validates the new password and updates it if valid.
+     *
+     * @param event The action event that triggered this method.
+     */
     @FXML
     private void handleUpdatePassword(ActionEvent event) {
         String newPassword = passwordTextField.getText();
@@ -167,26 +200,51 @@ public class AdministratorAccountSettingsController extends BaseMenuController {
         }
     }
 
+    /**
+     * Handles the action for navigating to the Manage Users scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleManageUsers(ActionEvent event) {
         loadScene("/fxml/ManageUsers.fxml", "Manage Users", event);
     }
 
+    /**
+     * Handles the action for navigating to the Manage Vehicles screen.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleManageVehicles(ActionEvent event) {
         loadScene("/fxml/ManageVehicles.fxml", "Manage Vehicles", event);
     }
 
+    /**
+     * Handles the action for navigating to the Manage Reservations scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleManageReservations(ActionEvent event) {
         loadScene("/fxml/ManageReservations.fxml", "Manage Reservations", event);
     }
 
+    /**
+     * Handles the action for navigating to the Admin Menu scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleAdminMenu(ActionEvent event) {
         loadScene("/fxml/Administrator.fxml", "Admin Menu", event);
     }
 
+    /**
+     * Handles the action for logging out and navigating to the Login scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleLogout(ActionEvent event) {
         loadScene("/fxml/Login.fxml", "Login", event);

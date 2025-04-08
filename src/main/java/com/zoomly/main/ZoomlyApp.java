@@ -10,7 +10,7 @@ import javafx.stage.Stage;
  * David Winter
  * CEN-3024C
  * Software Development 1
- * 04/06/2025
+ * 04/07/2025
  *
  * ZoomlyApp.java
  * This class serves as the main entry point for the Zoomly Vehicle Rental System.
@@ -19,6 +19,11 @@ import javafx.stage.Stage;
 
 public class ZoomlyApp extends Application {
 
+    /**
+     * Starts the JavaFX application by loading the ServerSetup.fxml file.
+     *
+     * @param primaryStage the main stage for this application
+     */
     @Override
     public void start(Stage primaryStage) {
         try {
@@ -32,6 +37,11 @@ public class ZoomlyApp extends Application {
         }
     }
 
+    /**
+     * Main method that launches the JavaFX application.
+     *
+     * @param args command-line arguments
+     */
     public static void main(String[] args) {
         launch(args);
     }

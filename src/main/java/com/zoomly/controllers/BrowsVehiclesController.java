@@ -30,8 +30,8 @@ import java.util.stream.Collectors;
  * Controller class for displaying and interacting with vehicles in the browsing view.
  * Handles filtering, vehicle selection, and reservations.
  */
-
 public class BrowsVehiclesController extends BaseMenuController {
+
     @FXML private Button userProfileButton;
     @FXML private Button reservationsButton;
     @FXML private Button editAccountButton;
@@ -61,6 +61,10 @@ public class BrowsVehiclesController extends BaseMenuController {
     private VBox selectedCard = null;
     private Vehicle selectedVehicle = null;
 
+    /**
+     * Initializes the controller by loading current user data, setting up date pickers,
+     * choice boxes, and setting action handlers for various UI elements.
+     */
     @FXML
     private void initialize() {
         loadCurrentUserData();
@@ -98,10 +102,16 @@ public class BrowsVehiclesController extends BaseMenuController {
         loadVehicles();
     }
 
+    /**
+     * Loads the current user data and updates the UI accordingly.
+     */
     private void loadCurrentUserData() {
         User currentUser = userService.getCurrentUser();
     }
 
+    /**
+     * Populates the make choice box with available vehicle makes.
+     */
     private void populateMakeChoiceBox() {
         List<Vehicle> vehicles = vehicleService.getAllVehicles();
         Set<String> makes = vehicles.stream().map(Vehicle::getMake).collect(Collectors.toSet());
@@ -112,6 +122,10 @@ public class BrowsVehiclesController extends BaseMenuController {
         makeChoiceBox.setValue("None");
     }
 
+    /**
+     * Handles the selection of a vehicle make in the choice box.
+     * Loads the models corresponding to the selected make.
+     */
     private void handleMakeSelection() {
         String selectedMake = makeChoiceBox.getValue();
 
@@ -134,7 +148,11 @@ public class BrowsVehiclesController extends BaseMenuController {
         }
     }
 
-
+    /**
+     * Loads the vehicles filtered by the selected make.
+     *
+     * @param make the selected vehicle make
+     */
     private void loadVehiclesByMake(String make) {
         List<Vehicle> vehicles;
 
@@ -154,13 +172,19 @@ public class BrowsVehiclesController extends BaseMenuController {
         }
     }
 
+    /**
+     * Handles the selection of a vehicle model in the choice box.
+     * Loads vehicles corresponding to the selected model.
+     */
     private void handleModelSelection() {
-
         String selectedModel = modelChoiceBox.getValue();
         if (selectedModel != null && selectedModel.equals("None")) {
         }
     }
 
+    /**
+     * Loads all available vehicles and displays them in the vehicle card container.
+     */
     private void loadVehicles() {
         List<Vehicle> vehicles = vehicleService.getAllVehicles();
         vehicleCardContainer.getChildren().clear();
@@ -172,11 +196,10 @@ public class BrowsVehiclesController extends BaseMenuController {
     }
 
     /**
-     * method: createVehicleCard
-     * parameters: Vehicle vehicle - The vehicle object containing the details to be displayed on the card.
-     * return: VBox - A VBox containing the vehicle card with image, details, and interaction logic.
-     * purpose: Creates and returns a VBox representing a vehicle card, displaying its image, make, model, year, mileage, price per day, and description.
-     *          The card also supports hover and click events for selecting a vehicle and updating the selected vehicle label.
+     * Creates a vehicle card with the provided vehicle details.
+     *
+     * @param vehicle the vehicle object containing the details to be displayed
+     * @return a VBox representing the vehicle card
      */
     private VBox createVehicleCard(Vehicle vehicle) {
         VBox card = new VBox(10);
@@ -240,6 +263,12 @@ public class BrowsVehiclesController extends BaseMenuController {
         return card;
     }
 
+    /**
+     * Handles the reservation action by checking for selected vehicle and valid dates,
+     * then creating the reservation if valid.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleReservation(ActionEvent event) {
         if (selectedVehicle == null) {
@@ -292,11 +321,11 @@ public class BrowsVehiclesController extends BaseMenuController {
         }
     }
 
-
-
-
-
-
+    /**
+     * Handles the filter action by filtering vehicles based on the selected criteria.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleFilter(ActionEvent event) {
         String selectedMake = makeChoiceBox.getValue();
@@ -321,21 +350,41 @@ public class BrowsVehiclesController extends BaseMenuController {
         }
     }
 
+    /**
+     * Handles the action for navigating to the User.fxml scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleUserProfile(ActionEvent event) {
         loadScene("/fxml/User.fxml", "User Profile", event);
     }
 
+    /**
+     * Handles the action for navigating to the Reservations.fxml scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleReservations(ActionEvent event) {
         loadScene("/fxml/Reservations.fxml", "Reservations", event);
     }
 
+    /**
+     * Handles the action for navigating to the EditAccountUser.fxml scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleEditAccount(ActionEvent event) {
         loadScene("/fxml/EditAccountUser.fxml", "Edit Account", event);
     }
 
+    /**
+     * Handles the action for navigating to the Login.fxml scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleLogout(ActionEvent event) {
         loadScene("/fxml/Login.fxml", "Login", event);

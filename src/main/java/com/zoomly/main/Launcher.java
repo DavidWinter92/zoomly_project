@@ -1,12 +1,17 @@
 package com.zoomly.main;
 
 /**
- * Launcher.java
- * Main entry point for the Zoomly application.
- * Starts the application by invoking the main method of the ZoomlyApp class.
+ * Launcher
+ * Entry point for the Zoomly application.
+ * Delegates application startup to the ZoomlyApp class.
  */
-
 public class Launcher {
+
+    /**
+     * Launches the application.
+     *
+     * @param args command-line arguments
+     */
     public static void main(String[] args) {
         ZoomlyApp.main(args);
     }

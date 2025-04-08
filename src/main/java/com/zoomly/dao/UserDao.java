@@ -15,8 +15,17 @@ import java.util.Optional;
  * Data Access Object (DAO) for interacting with the users table in the database.
  * Provides methods for adding, retrieving, updating, and deleting users.
  */
-
 public class UserDao {
+
+    /**
+     * Adds a new user to the database.
+     *
+     * @param firstName user's first name
+     * @param lastName user's last name
+     * @param email user's email
+     * @param password user's password
+     * @param accountType user's account type
+     */
     public void addUser(String firstName, String lastName, String email, String password, String accountType) {
         String sql = "INSERT INTO users (first_name, last_name, email, password, account_type) VALUES (?, ?, ?, ?, ?)";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -32,6 +41,12 @@ public class UserDao {
         }
     }
 
+    /**
+     * Retrieves a user by email.
+     *
+     * @param email email address to search
+     * @return optional user if found
+     */
     public Optional<User> getUserByEmail(String email) {
         String sql = "SELECT * FROM users WHERE email = ?";
         User user = null;
@@ -57,6 +72,13 @@ public class UserDao {
         return Optional.ofNullable(user);
     }
 
+    /**
+     * Updates the email of a user.
+     *
+     * @param userId user's ID
+     * @param newEmail new email to set
+     * @throws SQLException if update fails
+     */
     public void updateEmail(int userId, String newEmail) throws SQLException {
         String sql = "UPDATE users SET email = ? WHERE id = ?";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -67,6 +89,13 @@ public class UserDao {
         }
     }
 
+    /**
+     * Updates the first name of a user.
+     *
+     * @param userId user's ID
+     * @param newFirstName new first name to set
+     * @throws SQLException if update fails
+     */
     public void updateFirstName(int userId, String newFirstName) throws SQLException {
         String sql = "UPDATE users SET first_name = ? WHERE id = ?";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -77,6 +106,13 @@ public class UserDao {
         }
     }
 
+    /**
+     * Updates the last name of a user.
+     *
+     * @param userId user's ID
+     * @param newLastName new last name to set
+     * @throws SQLException if update fails
+     */
     public void updateLastName(int userId, String newLastName) throws SQLException {
         String sql = "UPDATE users SET last_name = ? WHERE id = ?";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -87,6 +123,13 @@ public class UserDao {
         }
     }
 
+    /**
+     * Updates the password of a user.
+     *
+     * @param userId user's ID
+     * @param newPassword new password to set
+     * @throws SQLException if update fails
+     */
     public void updatePassword(int userId, String newPassword) throws SQLException {
         String sql = "UPDATE users SET password = ? WHERE id = ?";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -97,6 +140,13 @@ public class UserDao {
         }
     }
 
+    /**
+     * Updates the account type of a user.
+     *
+     * @param userId user's ID
+     * @param accountType new account type to set
+     * @throws SQLException if update fails
+     */
     public void updateAccountType(int userId, String accountType) throws SQLException {
         String sql = "UPDATE users SET account_type = ? WHERE id = ?";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -107,6 +157,12 @@ public class UserDao {
         }
     }
 
+    /**
+     * Retrieves a user by their ID.
+     *
+     * @param userId user's ID
+     * @return optional user if found
+     */
     public Optional<User> getUserById(int userId) {
         String sql = "SELECT * FROM users WHERE id = ?";
         User user = null;
@@ -132,6 +188,11 @@ public class UserDao {
         return Optional.ofNullable(user);
     }
 
+    /**
+     * Retrieves all users from the database.
+     *
+     * @return list of all users
+     */
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
         String sql = "SELECT * FROM users";
@@ -157,6 +218,12 @@ public class UserDao {
         return users;
     }
 
+    /**
+     * Deletes a user from the database.
+     *
+     * @param userId user's ID
+     * @throws SQLException if deletion fails
+     */
     public void deleteUser(int userId) throws SQLException {
         String sql = "DELETE FROM users WHERE id = ?";
         try (Connection connection = DatabaseConnection.getConnection();

@@ -1,0 +1,6 @@
+com.zoomly.controllers
+com.zoomly.dao
+com.zoomly.main
+com.zoomly.model
+com.zoomly.service
+com.zoomly.util

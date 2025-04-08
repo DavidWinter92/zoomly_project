@@ -12,7 +12,6 @@ import javafx.scene.control.TextField;
  * Controller class for the administrator's main menu.
  * Manages user interactions for navigating to different functionalities.
  */
-
 public class AdministratorController extends BaseMenuController {
     @FXML
     public Button adminMenuButton;
@@ -35,10 +34,18 @@ public class AdministratorController extends BaseMenuController {
 
     private UserService userService;
 
+    /**
+     * Constructor for initializing the AdministratorController.
+     * Initializes the UserService instance.
+     */
     public AdministratorController() {
         this.userService = UserService.getInstance();
     }
 
+    /**
+     * Initializes the controller by setting up the button actions
+     * and refreshing the administrator's account data.
+     */
     @FXML
     private void initialize() {
         refreshData();
@@ -49,6 +56,10 @@ public class AdministratorController extends BaseMenuController {
         logoutButton.setOnAction(this::handleLogout);
     }
 
+    /**
+     * Refreshes the administrator's data by populating the text fields
+     * with the current user's details.
+     */
     @Override
     protected void refreshData() {
         User currentUser = userService.getCurrentUser();
@@ -61,26 +72,51 @@ public class AdministratorController extends BaseMenuController {
         }
     }
 
+    /**
+     * Handles the action for navigating to the Manage Users scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleManageUsers(ActionEvent event) {
         loadScene("/fxml/ManageUsers.fxml", "Manage Users", event);
     }
 
+    /**
+     * Handles the action for navigating to the Manage Vehicles screen.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleManageVehicles(ActionEvent event) {
         loadScene("/fxml/ManageVehicles.fxml", "Manage Vehicles", event);
     }
 
+    /**
+     * Handles the action for navigating to the Manage Reservations scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleManageReservations(ActionEvent event) {
         loadScene("/fxml/ManageReservations.fxml", "Manage Reservations", event);
     }
 
+    /**
+     * Handles the action for navigating to the Edit Account Admin scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleEditAccount(ActionEvent event) {
         loadScene("/fxml/EditAccountAdmin.fxml", "Edit Account", event);
     }
 
+    /**
+     * Handles the action for logging out and navigating to the Login scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleLogout(ActionEvent event) {
         loadScene("/fxml/Login.fxml", "Login", event);

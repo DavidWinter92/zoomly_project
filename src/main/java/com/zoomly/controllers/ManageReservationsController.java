@@ -20,8 +20,9 @@ import java.util.List;
  * ManageReservationsController.java
  * Controller class for managing vehicle reservations.
  * Handles displaying, updating, and canceling reservations, as well as managing date pickers and charge updates.
+ * This controller is part of the larger application for managing vehicle rentals.
+ * It works with the ReservationService to perform these operations.
  */
-
 public class ManageReservationsController extends BaseMenuController {
 
     @FXML private TableView<Reservation> reservationsTableView;
@@ -47,6 +48,10 @@ public class ManageReservationsController extends BaseMenuController {
 
     private final ReservationService reservationService = ReservationService.getInstance();
 
+    /**
+     * Initializes the controller by setting up the table, loading reservations,
+     * and configuring the date pickers.
+     */
     @FXML
     public void initialize() {
         setupTable();
@@ -62,6 +67,10 @@ public class ManageReservationsController extends BaseMenuController {
         });
     }
 
+    /**
+     * Sets up the table view for displaying reservation data.
+     * Configures the columns to display reservation attributes and allows editing of the total charge.
+     */
     private void setupTable() {
         idColumn.setCellValueFactory(data -> new SimpleObjectProperty<>(data.getValue().getId()));
         userIdColumn.setCellValueFactory(data -> new SimpleObjectProperty<>(data.getValue().getUserId()));
@@ -82,6 +91,9 @@ public class ManageReservationsController extends BaseMenuController {
         reservationsTableView.setEditable(true);
     }
 
+    /**
+     * Configures the date pickers to disable past dates and allow only valid dates for reservation updates.
+     */
     private void setupDatePickers() {
         pickupDatePicker.setDayCellFactory(picker -> new DateCell() {
             @Override public void updateItem(LocalDate item, boolean empty) {
@@ -98,12 +110,21 @@ public class ManageReservationsController extends BaseMenuController {
         });
     }
 
+    /**
+     * Loads the list of all reservations from the ReservationService and populates the table view with them.
+     */
     private void loadReservations() {
         List<Reservation> reservationList = reservationService.getAllReservations();
         ObservableList<Reservation> observableList = FXCollections.observableArrayList(reservationList);
         reservationsTableView.setItems(observableList);
     }
 
+    /**
+     * Updates the pickup and drop-off dates for the selected reservation.
+     * Validates that the drop-off date is after the pickup date before making the update.
+     *
+     * @param event The action event triggered by the user clicking the update button.
+     */
     @FXML
     private void handleUpdateReservation(ActionEvent event) {
         Reservation selected = reservationsTableView.getSelectionModel().getSelectedItem();
@@ -141,7 +162,11 @@ public class ManageReservationsController extends BaseMenuController {
         }
     }
 
-
+    /**
+     * Updates the total charge for the selected reservation.
+     *
+     * @param event The action event triggered by the user clicking the update total charge button.
+     */
     @FXML
     private void handleTotalChargeUpdate(ActionEvent event) {
         Reservation selected = reservationsTableView.getSelectionModel().getSelectedItem();
@@ -163,6 +188,11 @@ public class ManageReservationsController extends BaseMenuController {
         }
     }
 
+    /**
+     * Cancels the selected reservation.
+     *
+     * @param event The action event triggered by the user clicking the cancel button.
+     */
     @FXML
     private void handleCancelReservation(ActionEvent event) {
         Reservation selected = reservationsTableView.getSelectionModel().getSelectedItem();
@@ -176,28 +206,54 @@ public class ManageReservationsController extends BaseMenuController {
         loadReservations();
     }
 
-    // --- Navigation Menu ---
-    @FXML private void handleManageUsers(ActionEvent event) {
+    /**
+     * Handles the action for navigating to the Manage Users scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
+    @FXML
+    private void handleManageUsers(ActionEvent event) {
         loadScene("/fxml/ManageUsers.fxml", "Manage Users", event);
     }
 
-    @FXML private void handleManageVehicles(ActionEvent event) {
+    /**
+     * Handles the action for navigating to the Manage Vehicles screen.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
+    @FXML
+    private void handleManageVehicles(ActionEvent event) {
         loadScene("/fxml/ManageVehicles.fxml", "Manage Vehicles", event);
     }
 
-    @FXML private void handleManageReservations(ActionEvent event) {
-        loadScene("/fxml/ManageReservations.fxml", "Manage Reservations", event);
-    }
-
-    @FXML private void handleEditAccount(ActionEvent event) {
+    /**
+     * Handles the action for navigating to the Edit Account Admin scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
+    @FXML
+    private void handleEditAccount(ActionEvent event) {
         loadScene("/fxml/EditAccountAdmin.fxml", "Edit Account", event);
     }
 
-    @FXML private void handleLogout(ActionEvent event) {
-        loadScene("/fxml/Login.fxml", "Login", event);
-    }
-
+    /**
+     * Handles the action for navigating to the Administrator.fxml scene.
+     *
+     * @param event The action event triggered by the button click.
+     */
     @FXML private void handleAdminMenu(ActionEvent event) {
         loadScene("/fxml/Administrator.fxml", "Admin Menu", event);
     }
+
+    /**
+     * Handles the action for logging out and navigating to the Login scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
+    @FXML
+    private void handleLogout(ActionEvent event) {
+        loadScene("/fxml/Login.fxml", "Login", event);
+    }
+
+
 }

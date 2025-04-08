@@ -21,7 +21,6 @@ import java.util.Optional;
  * Controller class for managing user login.
  * Handles user authentication and scene transitions for the application.
  */
-
 public class LoginController {
     @FXML
     private Button loginButton;
@@ -35,11 +34,20 @@ public class LoginController {
     private UserService userService;
     private VehicleService vehicleService;
 
+    /**
+     * Constructor for initializing the LoginController.
+     * Initializes the UserService and VehicleService instances.
+     */
     public LoginController() {
         this.userService = UserService.getInstance();
         this.vehicleService = VehicleService.getInstance();
     }
 
+    /**
+     * Loads the login scene into the primary stage.
+     *
+     * @param primaryStage The main stage for the application.
+     */
     public void loadLoginScene(Stage primaryStage) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Login.fxml"));
@@ -55,6 +63,10 @@ public class LoginController {
         }
     }
 
+    /**
+     * Handles the login action. Validates user credentials and navigates
+     * to the corresponding scene based on account type (admin or user).
+     */
     @FXML
     public void handleLogin() {
         String email = emailTextField.getText();
@@ -73,6 +85,12 @@ public class LoginController {
         }
     }
 
+    /**
+     * Loads the specified FXML scene and sets the window title.
+     *
+     * @param fxmlPath The path to the FXML file to load.
+     * @param title The title to set for the window.
+     */
     private void loadScene(String fxmlPath, String title) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
@@ -86,6 +104,10 @@ public class LoginController {
         }
     }
 
+    /**
+     * Handles the action of navigating to the registration screen.
+     * Loads the registration FXML file and sets the scene to the registration page.
+     */
     @FXML
     public void handleSignUp() {
         try {

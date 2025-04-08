@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.zoomly.controllers"},{"l":"com.zoomly.dao"},{"l":"com.zoomly.main"},{"l":"com.zoomly.model"},{"l":"com.zoomly.service"},{"l":"com.zoomly.util"}];updateSearchResults();

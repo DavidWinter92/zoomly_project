@@ -29,7 +29,6 @@ import java.util.List;
  * Controller class for managing user reservations in the application.
  * Provides functionalities to list, cancel, and navigate to different user-related views.
  */
-
 public class ReservationsController extends BaseMenuController {
     @FXML
     private VBox reservationsVBox;
@@ -50,12 +49,20 @@ public class ReservationsController extends BaseMenuController {
     private ReservationService reservationService;
     private VehicleService vehicleService;
 
+    /**
+     * Constructor for ReservationsController
+     * Initializes service instances for user, reservation, and vehicle services.
+     */
     public ReservationsController() {
         this.userService = UserService.getInstance();
         this.reservationService = ReservationService.getInstance();
         this.vehicleService = VehicleService.getInstance();
     }
 
+    /**
+     * Initializes the controller by setting up event handlers and loading the user data.
+     * Also sets styles for the reservation scroll pane.
+     */
     @FXML
     private void initialize() {
         loadCurrentUserData();
@@ -70,15 +77,19 @@ public class ReservationsController extends BaseMenuController {
         createReservationCard(null);
     }
 
+    /**
+     * Loads the current user data.
+     * Retrieves the current logged-in user using the UserService.
+     */
     private void loadCurrentUserData() {
         User currentUser = userService.getCurrentUser();
     }
 
     /**
-     * method: createReservationCard
-     * parameters: ActionEvent event - The event triggered by the user action (not used in this case)
-     * return: void
-     * purpose: Loads and displays reservation cards for the current user, showing vehicle details, reservation information, and a cancel button for each reservation.
+     * Creates and displays reservation cards for the current user's reservations.
+     * Each card displays vehicle details, reservation information, and a cancel button.
+     *
+     * @param event The event triggered by the user action (not used in this case)
      */
     @FXML
     private void createReservationCard(ActionEvent event) {
@@ -149,6 +160,12 @@ public class ReservationsController extends BaseMenuController {
         }
     }
 
+    /**
+     * Handles the cancellation of a reservation.
+     * Removes the reservation from the list and updates the displayed reservation cards.
+     *
+     * @param reservationId The ID of the reservation to cancel
+     */
     @FXML
     private void handleCancelReservation(int reservationId) {
         try {
@@ -161,21 +178,41 @@ public class ReservationsController extends BaseMenuController {
         }
     }
 
+    /**
+     * Handles the action to navigate to the Browse Vehicles view.
+     *
+     * @param event The event triggered by the user action
+     */
     @FXML
     private void handleBrowsVehicle(ActionEvent event) {
         loadScene("/fxml/BrowsVehicles.fxml", "Browse Vehicles", event);
     }
 
+    /**
+     * Handles the action to navigate to the User Profile view.
+     *
+     * @param event The event triggered by the user action
+     */
     @FXML
     private void handleUserProfile(ActionEvent event) {
         loadScene("/fxml/User.fxml", "User Profile", event);
     }
 
+    /**
+     * Handles the action to navigate to the Edit Account view.
+     *
+     * @param event The event triggered by the user action
+     */
     @FXML
     private void handleEditAccount(ActionEvent event) {
         loadScene("/fxml/EditAccountUser.fxml", "Edit Account", event);
     }
 
+    /**
+     * Handles the action for logging out and navigating to the Login scene.
+     *
+     * @param event the ActionEvent triggered by the button press
+     */
     @FXML
     private void handleLogout(ActionEvent event) {
         loadScene("/fxml/Login.fxml", "Login", event);
