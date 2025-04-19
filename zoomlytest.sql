@@ -1,3 +1,4 @@
+DROP DATABASE IF EXISTS `zoomlytest`;
 CREATE DATABASE IF NOT EXISTS `zoomlytest`; 
 USE `zoomlytest`;
 

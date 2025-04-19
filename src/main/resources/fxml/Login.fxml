@@ -46,8 +46,8 @@
                   <Font size="16.0" />
                </font>
             </Label>
-            <TextField fx:id="emailTextField" layoutX="192.0" layoutY="239.0" promptText="Email" text="admin@test.com" />
-            <PasswordField fx:id="passwordPasswordField" layoutX="192.0" layoutY="306.0" promptText="Password" text="Password1!" />
+            <TextField fx:id="emailTextField" layoutX="192.0" layoutY="239.0" promptText="Email" />
+            <PasswordField fx:id="passwordPasswordField" layoutX="192.0" layoutY="306.0" promptText="Password" />
             <Button fx:id="loginButton" contentDisplay="CENTER" layoutX="125.0" layoutY="369.0" mnemonicParsing="false" onAction="#handleLogin" prefHeight="30.0" prefWidth="70.0" style="-fx-background-color: #6fbf4e;" text="Login" textFill="WHITE" />
             <Label fx:id="statusLabel" layoutX="89.0" layoutY="520.0" textFill="#6fbf4e" />
             <Button fx:id="SignUp" contentDisplay="CENTER" layoutX="249.0" layoutY="369.0" mnemonicParsing="false" onAction="#handleSignUp" prefHeight="30.0" prefWidth="70.0" style="-fx-background-color: #101010;" text="Sign Up" textFill="#6fbf4e">

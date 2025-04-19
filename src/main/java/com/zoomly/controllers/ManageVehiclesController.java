@@ -3,6 +3,7 @@ package com.zoomly.controllers;
 import com.zoomly.model.Vehicle;
 import com.zoomly.service.VehicleService;
 import com.zoomly.util.FileLoader;
+import com.zoomly.util.VehicleValidator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -146,10 +147,19 @@ public class ManageVehiclesController extends BaseMenuController {
                     selectedVehicle.setMake(newValue);
                     break;
                 case "model":
+                    String make = selectedVehicle.getMake();
+                    if (!VehicleValidator.isValidModel(make, newValue)) {
+                        throw new IllegalArgumentException("Invalid model for " + make + ": " + newValue);
+                    }
                     selectedVehicle.setModel(newValue);
                     break;
                 case "year":
-                    selectedVehicle.setYear(Integer.parseInt(newValue));
+                    int year = Integer.parseInt(newValue);
+                    int currentYear = java.time.Year.now().getValue();
+                    if (year < 1800 || year > currentYear) {
+                        throw new IllegalArgumentException("Year must be between 1800 and " + currentYear);
+                    }
+                    selectedVehicle.setYear(year);
                     break;
                 case "mileage":
                     selectedVehicle.setMileage(Double.parseDouble(newValue));
@@ -178,11 +188,13 @@ public class ManageVehiclesController extends BaseMenuController {
             );
 
             loadVehicles();
+            errorLabel.setText("");
         } catch (Exception e) {
             errorLabel.setText("Error updating vehicle: " + e.getMessage());
             revertVehicleField(event, originalValue);
         }
     }
+
 
     /**
      * Reverts the vehicle field to its original value in case of an error during update.

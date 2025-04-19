@@ -22,7 +22,6 @@ import javafx.scene.text.Font;
 import java.io.File;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -113,14 +112,43 @@ public class BrowsVehiclesController extends BaseMenuController {
      * Populates the make choice box with available vehicle makes.
      */
     private void populateMakeChoiceBox() {
-        List<Vehicle> vehicles = vehicleService.getAllVehicles();
-        Set<String> makes = vehicles.stream().map(Vehicle::getMake).collect(Collectors.toSet());
+        List<String> makes = vehicleService.getAllVehicles().stream()
+                .map(Vehicle::getMake)
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
 
-        makes.add("None");
+        makes.add(0, "All"); // Add "All" as the first item
 
         makeChoiceBox.setItems(FXCollections.observableArrayList(makes));
-        makeChoiceBox.setValue("None");
+        makeChoiceBox.setValue("All");
+
+        populateModelChoiceBox("All");
     }
+
+    private void populateModelChoiceBox(String selectedMake) {
+        List<String> models;
+
+        if ("All".equals(selectedMake)) {
+            models = vehicleService.getAllVehicles().stream()
+                    .map(Vehicle::getModel)
+                    .distinct()
+                    .sorted()
+                    .collect(Collectors.toList());
+        } else {
+            models = vehicleService.getAllVehicles().stream()
+                    .filter(v -> v.getMake().equals(selectedMake))
+                    .map(Vehicle::getModel)
+                    .distinct()
+                    .sorted()
+                    .collect(Collectors.toList());
+        }
+
+        models.add(0, "All");
+        modelChoiceBox.setItems(FXCollections.observableArrayList(models));
+        modelChoiceBox.setValue("All");
+    }
+
 
     /**
      * Handles the selection of a vehicle make in the choice box.
@@ -129,10 +157,10 @@ public class BrowsVehiclesController extends BaseMenuController {
     private void handleMakeSelection() {
         String selectedMake = makeChoiceBox.getValue();
 
-        if (selectedMake == null || selectedMake.equals("None")) {
-            modelChoiceBox.setItems(FXCollections.observableArrayList());
-            modelChoiceBox.setValue(null);
-            loadVehiclesByMake(selectedMake);
+        if (selectedMake == null || selectedMake.equals("All")) {
+            modelChoiceBox.setItems(FXCollections.observableArrayList("All"));
+            modelChoiceBox.setValue("All");
+            loadVehicles();
         } else {
             List<String> models = vehicleService.getAllVehicles().stream()
                     .filter(v -> v.getMake().equals(selectedMake))
@@ -140,13 +168,14 @@ public class BrowsVehiclesController extends BaseMenuController {
                     .distinct()
                     .collect(Collectors.toList());
 
-            models.add("None");
+            models.add("All");
             modelChoiceBox.setItems(FXCollections.observableArrayList(models));
-            modelChoiceBox.setValue("None");
+            modelChoiceBox.setValue("All");
 
             loadVehiclesByMake(selectedMake);
         }
     }
+
 
     /**
      * Loads the vehicles filtered by the selected make.
@@ -177,10 +206,30 @@ public class BrowsVehiclesController extends BaseMenuController {
      * Loads vehicles corresponding to the selected model.
      */
     private void handleModelSelection() {
+        String selectedMake = makeChoiceBox.getValue();
         String selectedModel = modelChoiceBox.getValue();
-        if (selectedModel != null && selectedModel.equals("None")) {
+
+        List<Vehicle> vehicles = vehicleService.getAllVehicles();
+
+        if (selectedMake != null && !selectedMake.equals("All")) {
+            vehicles = vehicles.stream()
+                    .filter(v -> v.getMake().equals(selectedMake))
+                    .collect(Collectors.toList());
+        }
+
+        if (selectedModel != null && !selectedModel.equals("All")) {
+            vehicles = vehicles.stream()
+                    .filter(v -> v.getModel().equals(selectedModel))
+                    .collect(Collectors.toList());
+        }
+
+        vehicleCardContainer.getChildren().clear();
+        for (Vehicle vehicle : vehicles) {
+            VBox card = createVehicleCard(vehicle);
+            vehicleCardContainer.getChildren().add(card);
         }
     }
+
 
     /**
      * Loads all available vehicles and displays them in the vehicle card container.
@@ -335,20 +384,22 @@ public class BrowsVehiclesController extends BaseMenuController {
         String year = yearTextField.getText();
 
         List<Vehicle> filteredVehicles = vehicleService.getAllVehicles().stream()
-                .filter(v -> (selectedMake == null || v.getMake().equals(selectedMake)) &&
-                        (selectedModel == null || v.getModel().equals(selectedModel)) &&
+                .filter(v -> (selectedMake == null || selectedMake.equals("All") || v.getMake().equals(selectedMake)) &&
+                        (selectedModel == null || selectedModel.equals("All") || v.getModel().equals(selectedModel)) &&
                         (mileage.isEmpty() || v.getMileage() <= Long.parseLong(mileage)) &&
-                        (price.isEmpty() || String.valueOf(v.getPricePerDay()).contains(price)) &&
-                        (year.isEmpty() || String.valueOf(v.getYear()).equals(year)))
+                        (price.isEmpty() || v.getPricePerDay() <= Double.parseDouble(price)) &&
+                        (year.isEmpty() || v.getYear() <= Integer.parseInt(year)))
                 .collect(Collectors.toList());
 
         vehicleCardContainer.getChildren().clear();
-
         for (Vehicle vehicle : filteredVehicles) {
             VBox card = createVehicleCard(vehicle);
             vehicleCardContainer.getChildren().add(card);
         }
     }
+
+
+
 
     /**
      * Handles the action for navigating to the User.fxml scene.

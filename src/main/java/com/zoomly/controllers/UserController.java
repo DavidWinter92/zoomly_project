@@ -15,7 +15,7 @@ import javafx.event.ActionEvent;
 public class UserController extends BaseMenuController {
 
     @FXML
-    private Button browseVehicleButton;
+    private Button browsVehicleButton;
     @FXML
     private Button reservationsButton;
     @FXML
@@ -44,8 +44,8 @@ public class UserController extends BaseMenuController {
     @FXML
     private void initialize() {
         refreshData();
-        browseVehicleButton.setOnAction(this::handleBrowseVehicles);
-        reservationsButton.setOnAction(this::handleManageReservations);
+        browsVehicleButton.setOnAction(this::handleBrowsVehicles);
+        reservationsButton.setOnAction(this::handleReservations);
         editAccountButton.setOnAction(this::handleEditAccount);
         logoutButton.setOnAction(this::handleLogout);
     }
@@ -67,25 +67,24 @@ public class UserController extends BaseMenuController {
     }
 
     /**
-     * Handles the action for navigating to the Browse Vehicles scene.
+     * Handles the action to navigate to the Browse Vehicles view.
      *
-     * @param event the ActionEvent triggered by the button press
+     * @param event The event triggered by the user action
      */
     @FXML
-    private void handleBrowseVehicles(ActionEvent event) {
+    private void handleBrowsVehicles(ActionEvent event) {
         loadScene("/fxml/BrowsVehicles.fxml", "Browse Vehicles", event);
     }
 
     /**
-     * Handles the action for navigating to the Reservations scene.
+     * Handles the action for navigating to the Reservations.fxml scene.
      *
      * @param event the ActionEvent triggered by the button press
      */
     @FXML
-    private void handleManageReservations(ActionEvent event) {
+    private void handleReservations(ActionEvent event) {
         loadScene("/fxml/Reservations.fxml", "Reservations", event);
     }
-
     /**
      * Handles the action for navigating to the Edit Account scene.
      *

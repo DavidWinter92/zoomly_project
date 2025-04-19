@@ -68,7 +68,7 @@ public class VehicleValidator {
      * @param model The model of the vehicle.
      * @return true if the model is valid for the make, false otherwise.
      */
-    private static boolean isValidModel(String make, String model) {
+    public static boolean isValidModel(String make, String model) {
         switch (make) {
             case "Toyota":
                 return TOYOTA_MODELS.contains(model);

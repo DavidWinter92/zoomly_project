@@ -53,7 +53,7 @@
             <TextField fx:id="passwordTextField" layoutX="162.0" layoutY="436.0" prefHeight="25.0" prefWidth="114.0" />
             <TextField fx:id="emailTextField" layoutX="162.0" layoutY="399.0" prefHeight="25.0" prefWidth="114.0" />
             <Text fill="#6fbf4e" layoutX="9.0" layoutY="528.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Upload User .txt File:" />
-            <TextField fx:id="uploadUsersTextField" layoutX="124.0" layoutY="511.0" prefHeight="25.0" prefWidth="114.0" promptText="../user_file_path.txt" text="users.txt" />
+            <TextField fx:id="uploadUsersTextField" layoutX="124.0" layoutY="511.0" prefHeight="25.0" prefWidth="114.0" promptText="../user_file_path.txt" />
             <Button fx:id="deleteButton" layoutX="496.0" layoutY="286.0" mnemonicParsing="false" onAction="#handleDeleteUser" style="-fx-background-color: ff224a;" text="Delete" textFill="WHITE" />
             <TableView fx:id="usersTableView" editable="true" layoutY="29.0" prefHeight="248.0" prefWidth="558.0" style="-fx-background-color: black;">
               <columns>

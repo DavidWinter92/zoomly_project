@@ -47,18 +47,18 @@
             <Text fill="#6fbf4e" layoutX="302.0" layoutY="372.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Model:" textAlignment="RIGHT" />
             <Button fx:id="addVehicleButton" layoutX="381.0" layoutY="464.0" mnemonicParsing="false" onAction="#handleAddVehicle" style="-fx-background-color: #6fbf4e;" text="Add Vehicle" textFill="WHITE" />
             <Button fx:id="uploadButton" layoutX="259.0" layoutY="511.0" mnemonicParsing="false" onAction="#handleVehicleFileUpload" style="-fx-background-color: #6fbf4e;" text="Upload" textFill="WHITE" />
-            <TextField fx:id="mileageTextField" layoutX="348.0" layoutY="392.0" prefHeight="25.0" prefWidth="114.0" text="156684" />
-            <TextField fx:id="modelTextField" layoutX="347.0" layoutY="355.0" prefHeight="25.0" prefWidth="114.0" text="Corolla" />
-            <TextField fx:id="makeTextField" layoutX="146.0" layoutY="355.0" prefHeight="25.0" prefWidth="114.0" text="Toyota" />
-            <TextField fx:id="priceTextField" layoutX="145.0" layoutY="429.0" prefHeight="25.0" prefWidth="114.0" text="13.51" />
-            <TextField fx:id="yearTextField" layoutX="145.0" layoutY="392.0" prefHeight="25.0" prefWidth="114.0" text="2019" />
+            <TextField fx:id="mileageTextField" layoutX="348.0" layoutY="392.0" prefHeight="25.0" prefWidth="114.0" />
+            <TextField fx:id="modelTextField" layoutX="347.0" layoutY="355.0" prefHeight="25.0" prefWidth="114.0" />
+            <TextField fx:id="makeTextField" layoutX="146.0" layoutY="355.0" prefHeight="25.0" prefWidth="114.0" />
+            <TextField fx:id="priceTextField" layoutX="145.0" layoutY="429.0" prefHeight="25.0" prefWidth="114.0" />
+            <TextField fx:id="yearTextField" layoutX="145.0" layoutY="392.0" prefHeight="25.0" prefWidth="114.0" />
             <Text fill="#6fbf4e" layoutX="10.0" layoutY="528.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Upload Vehicle .txt File:" />
-            <TextField fx:id="uploadVehiclesTextField" layoutX="137.0" layoutY="511.0" prefHeight="25.0" prefWidth="114.0" promptText="../vehicle_file_path.txt" text="vehicles.txt" />
+            <TextField fx:id="uploadVehiclesTextField" layoutX="137.0" layoutY="511.0" prefHeight="25.0" prefWidth="114.0" promptText="../vehicle_file_path.txt" />
             <Button fx:id="deleteButton" layoutX="496.0" layoutY="286.0" mnemonicParsing="false" onAction="#handleDeleteVehicle" style="-fx-background-color: ff224a;" text="Delete" textFill="WHITE" />
             <Text fill="#6fbf4e" layoutX="317.0" layoutY="446.0" strokeType="OUTSIDE" strokeWidth="0.0" text="VIN:" textAlignment="RIGHT" />
-            <TextField fx:id="vinTextField" layoutX="347.0" layoutY="429.0" prefHeight="25.0" prefWidth="114.0" text="SG681E81" />
+            <TextField fx:id="vinTextField" layoutX="347.0" layoutY="429.0" prefHeight="25.0" prefWidth="114.0" />
             <Text fill="#6fbf4e" layoutX="76.0" layoutY="336.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Image Path:" textAlignment="RIGHT" />
-            <TextField fx:id="imagePathTextField" layoutX="147.0" layoutY="319.0" prefHeight="25.0" prefWidth="114.0" promptText="../vehicle_file_path.txt" text="E:\Documents\College\Repo\Java\zoomly_project\src\main\resources\vehicle_imgs\2019_corolla.png" />
+            <TextField fx:id="imagePathTextField" layoutX="147.0" layoutY="319.0" prefHeight="25.0" prefWidth="114.0" promptText="../image_file_path.jpg" />
             <TableView fx:id="vehiclesTableView" editable="true" layoutY="29.0" prefHeight="248.0" prefWidth="558.0" style="-fx-background-color: black;">
               <columns>
                 <TableColumn fx:id="idColumn" editable="false" prefWidth="26.0" text="ID" />
@@ -73,7 +73,7 @@
               </columns>
             </TableView>
             <Text fill="#6fbf4e" layoutX="277.0" layoutY="336.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Description:" textAlignment="RIGHT" />
-            <TextField fx:id="descriptionTextField" layoutX="347.0" layoutY="319.0" prefHeight="25.0" prefWidth="114.0" promptText="../vehicle_file_path.txt" text="test" />
+            <TextField fx:id="descriptionTextField" layoutX="347.0" layoutY="319.0" prefHeight="25.0" prefWidth="114.0" />
             <Label fx:id="errorLabel" layoutX="7.0" layoutY="462.0" prefHeight="44.0" prefWidth="365.0" textFill="#ff2525" />
          </children>
       </AnchorPane>
